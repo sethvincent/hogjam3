@@ -1,0 +1,20 @@
+{
+  "name": "hogjam3",
+  "description": "for the gaming for good game jam",
+  "version": "0.0.0",
+  "repository": {
+    "url": "git://github.com/sethvincent/hogjam3.git"
+  },
+  "main": "game.js",
+  "scripts": {
+    "test": "",
+    "start": ""
+  },
+  "dependencies": {
+    "crtrdg-keyboard": "0.0.2",
+    "crtrdg-gameloop": "~0.1.0",
+    "crtrdg-mouse": "0.0.3",
+    "crtrdg-entity": "0.0.8"
+  },
+  "devDependencies": {}
+}
