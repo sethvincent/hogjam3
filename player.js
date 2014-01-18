@@ -19,7 +19,7 @@ function Player(options){
   this.position = options.position;
 
   this.speed = 5;
-  this.friction = 0.1;
+  this.friction = 0.4;
   this.health = 100;
   this.strength = 5;
   this.color = '#fff';
@@ -37,15 +37,20 @@ function Player(options){
   this.on('update', function(interval){ 
     self.input(self.keysDown);
     self.move();
-    self.velocity.x = parseInt(self.velocity.x * this.friction);
-    self.velocity.y = parseInt(self.velocity.y * this.friction);
+    self.velocity.x *= this.friction;
+    self.velocity.y *= this.friction;
     self.boundaries();
   });
 
   this.on('draw', function(c){
     c.save();
     c.fillStyle = self.color;
-    c.fillRect(self.position.x, self.position.y, self.size.x, self.size.y);
+    c.fillRect(
+      self.position.x - this.camera.position.x, 
+      self.position.y - this.camera.position.y, 
+      self.size.x, 
+      self.size.y
+    );
     c.restore();
   });
 }

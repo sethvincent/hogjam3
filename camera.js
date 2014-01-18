@@ -43,8 +43,8 @@ function Camera(options){
 }
 
 Camera.prototype.update = function(){
-  var following = this.following,
-  followPoint = this.followPoint;
+  var following = this.following;
+  var followPoint = this.followPoint;
 
   if (following != null){   
     if (followPoint.x !== null){  
