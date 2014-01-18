@@ -10,6 +10,9 @@ var Mouse = require('crtrdg-mouse');
 /*
 * custom modules
 */
+
+var Map = require('./map');
+var Camera = require('./camera');
 var Player = require('./player');
 var randomInt = require('./util/math').randomInt;
 var randomRGB = require('./util/math').randomRGB;
@@ -43,11 +46,23 @@ game.on('draw', function(c){
 
 });
 
+game.on('draw-background', function(context){
+  context.fillStyle = 'rgb(100, 200, 150)';
+  context.fillRect(0, 0, game.width, game.height);
+  map.draw(context, camera);
+});
+
+game.on('draw-foreground', function(context){
+
+});
+
+
 /*
 * Keyboard
 */
 
 var keyboard = new Keyboard(game);
+var keysDown = keyboard.keysDown;
 
 
 /*
@@ -57,6 +72,37 @@ var keyboard = new Keyboard(game);
 var mouse = new Mouse(game);
 
 mouse.on('click', function(){
-	if (game.paused) scene.set(match);
-	else game.pause();
+
+});
+
+
+/*
+* Player
+*/
+
+var player = new Player({
+  game: game,
+  keysDown: keysDown,
+  camera: camera,
+  position: { x: game.width / 2 - 10, y: game.height / 2 - 10 }
+});
+
+player.addTo(game);
+
+
+/*
+*
+* MAP & CAMERA
+*
+*/
+
+var map = new Map(game, 5000, 5000);
+map.generate();
+
+var camera = new Camera({
+  game: game,
+  follow: player,
+  followPoint: { x: game.width / 2, y: game.height / 2 },
+  viewport: { width: game.width, height: game.height },
+  map: map
 });

@@ -12,12 +12,14 @@ function Player(options){
 
   this.game = options.game;
   this.keysDown = options.keysDown;
+  this.camera = options.camera;
 
-  this.size = { x: 20, y: 80 };
+  this.size = { x: 20, y: 20 };
   this.velocity = { x: 0, y: 0 };
+  this.position = options.position;
 
-  this.speed = 8.5;
-  this.friction = 0.5;
+  this.speed = 5;
+  this.friction = 0.1;
   this.health = 100;
   this.strength = 5;
   this.color = '#fff';
@@ -35,6 +37,8 @@ function Player(options){
   this.on('update', function(interval){ 
     self.input(self.keysDown);
     self.move();
+    self.velocity.x = parseInt(self.velocity.x * this.friction);
+    self.velocity.y = parseInt(self.velocity.y * this.friction);
     self.boundaries();
   });
 
@@ -49,43 +53,42 @@ function Player(options){
 inherits(Player, Entity);
 
 Player.prototype.move = function(){
-  /* update the position by the velocity of the entity */
-  this.position.x += this.velocity.x;
-  this.position.y += this.velocity.y;
-
-  /* slow the velocity using friction */
-  this.velocity.x = parseInt(this.velocity.x * this.friction);
-  this.velocity.y = parseInt(this.velocity.y * this.friction);
+  this.position.x += this.velocity.x * this.friction;
+  this.position.y += this.velocity.y * this.friction;
 };
 
 Player.prototype.boundaries = function(){
-  /* left boundary */
-  if (this.position.x <= 0) this.position.x = 0;
+  if (this.position.x <= 0){
+    this.position.x = 0;
+  }
 
-  /* right boundary */
-  if (this.position.x >= this.game.width - this.size.x) this.position.x = this.game.width - this.size.x;
+  if (this.position.x >= this.camera.map.width - this.size.x){
+    this.position.x = this.camera.map.width - this.size.x;
+  }
 
-  /* top boundary */
-  if (this.position.y <= 0) this.position.y = 0;
+  if (this.position.y <= 0){
+    this.position.y = 0;
+  }
 
-  /* bottom boundary */
-  if (this.position.y >= this.game.height - this.size.y) this.position.y = this.game.height - this.size.y;
+  if (this.position.y >= this.camera.map.height - this.size.y){
+    this.position.y = this.camera.map.height - this.size.y;
+  }
 };
 
-Player.prototype.input = function(keysdown){
-  if ('W' in keysdown){
+Player.prototype.input = function(){
+  if ('W' in this.keysDown){
     this.velocity.y -= this.speed;
   }
 
-  if ('W' in keysdown){
+  if ('S' in this.keysDown){
     this.velocity.y += this.speed;
   }
 
-  if ('A' in keysdown){
+  if ('A' in this.keysDown){
     this.velocity.x -= this.speed;
   }
 
-  if ('D' in keysdown){
+  if ('D' in this.keysDown){
     this.velocity.x += this.speed;
   }
 };
