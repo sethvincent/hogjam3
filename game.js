@@ -10,7 +10,10 @@ var Mouse = require('crtrdg-mouse');
 /*
 * custom modules
 */
-
+var Player = require('./player');
+var randomInt = require('./util/math').randomInt;
+var randomRGB = require('./util/math').randomRGB;
+var randomRGBA = require('./util/math').randomRGBA;
 
 
 /*

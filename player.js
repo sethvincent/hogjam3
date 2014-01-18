@@ -1,5 +1,8 @@
 var inherits = require('inherits');
 var Entity = require('crtrdg-entity');
+var randomInt = require('./util/math').randomInt;
+var randomRGB = require('./util/math').randomRGB;
+var randomRGBA = require('./util/math').randomRGBA;
 
 module.exports = Player;
 
