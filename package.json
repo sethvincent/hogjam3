@@ -7,8 +7,8 @@
   },
   "main": "game.js",
   "scripts": {
-    "test": "",
-    "start": ""
+    "start": "beefy game.js:bundle.js --live",
+    "bundle": "browserify game.js -o bundle.js"
   },
   "dependencies": {
     "crtrdg-keyboard": "0.0.2",
