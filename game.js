@@ -152,7 +152,7 @@ var player = new Player({
 
 player.addTo(game);
 
-player.everySecond = function() {	
+player.everySecond = function() {
   if(game.currentScene.name == 'day'){
 
   }
@@ -426,15 +426,13 @@ map.locations.forEach(function(location, index, array) {
   console.log("location");
   location.on('update', function(c) {
     if (player.touches(location)) {
-      //console.log('entered location');
       player.addBlocker(location);
-      //var touch_bb = player.boundingBox.union(location.boundingBox);
-      //console.log(player.boundingBox);
-      //console.log(touch_bb);
-      //pizza.remove();
-      //inventory.add(pizza);
       if (location.menu) {
-        location.menu.open();
+        if (!location.menu.opened) {
+          location.menu.opened = true;
+          console.log("opening");
+          location.menu.open();
+        }
       }
     } else {
       player.removeBlocker(location);
@@ -449,8 +447,8 @@ map.locations.forEach(function(location, index, array) {
     message: "Here's a menu choice",
     close_timeout: 5,
     choices: [
-      "choice 1",
-      "choice 2"
+      { "name": "choice1", "value": "choice 1" },
+      { "name": "choice2", "value": "choice 2" }
     ]
   });
 
