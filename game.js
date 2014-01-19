@@ -17,6 +17,11 @@ var SceneManager = require('crtrdg-scene');
 var Map = require('./map');
 var Camera = require('./camera');
 var Player = require('./player');
+
+/* locations */
+var Shop = require('./locations/shop');
+
+/* util */
 var randomInt = require('./util/math').randomInt;
 var randomRGB = require('./util/math').randomRGB;
 var randomRGBA = require('./util/math').randomRGBA;
@@ -74,10 +79,12 @@ tick.interval(function() {
   if(minutes === 0) scene.set(day);
   if(minutes === 5) scene.set(night);
 
+  player.everyMinute(minutes);
+
+
   if (minutes == 8) minutes = 0;
   else minutes++;
 
-  player.everyMinute();
 }, 60000);
 
 
@@ -86,10 +93,11 @@ tick.interval(function() {
 var seconds = 0;
 tick.interval(function() {
   console.log('seconds', seconds)
+
+  player.everySecond(seconds);
+
   if (seconds == 60) seconds = 0;
   else seconds++;
-
-  player.everySecond();
 }, 1000);
 
 
@@ -203,6 +211,7 @@ day.on('draw-foreground', function(c){
   c.fillRect(0, 0, game.width, game.height);
 });
 
+
 /*
 * Night
 */
@@ -231,3 +240,23 @@ night.on('draw-foreground', function(c){
   c.fillStyle = 'rgba(0, 0, 0, 0.5)';
   c.fillRect(0, 0, game.width, game.height);
 });
+
+
+/*
+* Locations
+*/
+
+var shop = new Shop({
+	camera: camera,
+	map: map,
+	position: {
+		x: 200,
+		y: 200
+	},
+	size: {
+		x: 100,
+		y: 300
+	}
+});
+
+shop.addTo(game);
