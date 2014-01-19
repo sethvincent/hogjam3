@@ -378,3 +378,46 @@ map.locations.forEach(function(location, index, array) {
 });
 
 map.load(game, camera, "locations.json");
+var assetLoader = new AssetLoader();
+var spriteSheet = assetLoader.load("assets/setPiecesTSR.PNG");
+
+//var store = new createjs.Sprite(spriteSheet, "store");
+//console.log(spriteSheet);
+
+map.load(game, camera, spriteSheet, "locations.json");
+map.locations.forEach(function(location, index, array) {
+  console.log("location");
+  location.on('update', function(c) {
+    if (player.touches(location)) {
+      //console.log('entered location');
+      player.addBlocker(location);
+      //var touch_bb = player.boundingBox.union(location.boundingBox);
+      //console.log(player.boundingBox);
+      //console.log(touch_bb);
+      //pizza.remove();
+      //inventory.add(pizza);
+      if (location.menu) {
+        location.menu.open();
+      }
+    } else {
+      player.removeBlocker(location);
+    }
+  });
+});
+
+map.locations.forEach(function(location, index, array) {
+  var menu = new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "Here's a menu choice",
+    close_timeout: 5,
+    choices: [
+      "choice 1",
+      "choice 2"
+    ]
+  });
+
+  location.menu = menu;
+});
+
+map.load(game, camera, "locations.json");
