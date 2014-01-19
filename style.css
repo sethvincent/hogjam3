@@ -17,7 +17,7 @@ textarea {
 }
 
 #inventory {
-
+	float: left;
 }
 
 #inventory h3 {
@@ -31,4 +31,10 @@ textarea {
 
 #inventory li {
 	display: inline-block;
+}
+
+#wallet {
+	float: right;
+	margin: 30px 35px;
+	font-weight: 900;
 }

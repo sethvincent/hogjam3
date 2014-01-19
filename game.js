@@ -18,6 +18,7 @@ var Camera = require('./camera');
 var Player = require('./player');
 var Item = require('./item');
 var Inventory = require('./inventory');
+var Wallet = require('./wallet');
 
 /* locations */
 var Shop = require('./locations/shop');
@@ -335,3 +336,10 @@ pizza.on('draw', function(c){
 		this.size.y
 	);
 });
+
+
+/*
+* Wallet
+*/
+
+var wallet = new Wallet();

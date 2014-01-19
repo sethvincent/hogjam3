@@ -15,7 +15,7 @@ function Inventory(game){
 
 Inventory.prototype.createHTML = function(){
   this.el = document.createElement('ul');
-  this.el.id = 'inventory'
+  this.el.id = 'inventory';
 
   var h3 = document.createElement('h3');
   h3.innerHTML = 'inventory';
