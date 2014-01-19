@@ -374,3 +374,5 @@ map.locations.forEach(function(location, index, array) {
 
   location.menu = menu;
 });
+
+map.load(game, camera, "locations.json");
