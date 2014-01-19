@@ -38,9 +38,12 @@ textarea {
 }
 
 #wallet {
-	float: right;
+	position: fixed;
+  bottom: 0;
+  right: 0;
 	margin: 30px 35px;
 	font-weight: 900;
+  font-size: 45px;
 }
 
 #outer-dialog-wrapper {

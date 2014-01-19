@@ -41,8 +41,7 @@ Inventory.prototype.add = function(item){
       quantity: 1
     }
 
-    self.currentWeight += item.weight;
-    self.weightEl.innerHTML = self.currentWeight + '/' + self.maxWeight;
+    this.addWeight(item.weight);
 
     var li = document.createElement('li');
     li.innerHTML = item.name;
@@ -66,8 +65,20 @@ Inventory.prototype.remove = function(item){
       this.el.removeChild(itemEl);
     }
   }
+
+  this.removeWeight(item.weight);
 };
 
 Inventory.prototype.list = function(){
   return this.game.inventory.join(', ');
 };
+
+Inventory.prototype.addWeight = function(weight){
+  this.currentWeight += weight;
+  this.weightEl.innerHTML = this.currentWeight + '/' + this.maxWeight;
+}
+
+Inventory.prototype.removeWeight = function(weight){
+  this.currentWeight -= weight;
+  this.weightEl.innerHTML = this.currentWeight + '/' + this.maxWeight;
+}
