@@ -19,6 +19,8 @@ var Player = require('./player');
 var Item = require('./item');
 var Inventory = require('./inventory');
 var Wallet = require('./wallet');
+var AssetLoader = require('./asset_loader');
+var Menu = require('./menu');
 
 /* util */
 var randomInt = require('./util/math').randomInt;
@@ -26,8 +28,6 @@ var randomRGB = require('./util/math').randomRGB;
 var randomRGBA = require('./util/math').randomRGBA;
 
 var Meter = require('./meter');
-
-
 
 /*
 * create game object
@@ -74,6 +74,7 @@ game.on('draw-foreground', function(context){
 
 // Global list of counter listeners
 intervalEvents = [];
+minuteListeners = [];
 
 /* every minute */
 
@@ -84,10 +85,12 @@ tick.interval(function() {
 
   player.everyMinute(minutes);
 
-
   if (minutes == 8) minutes = 0;
   else minutes++;
 
+  minuteListeners.forEach(function(listener, index, array) {
+    listener.everyMinute(minutes);
+  });
 }, 60000);
 
 
@@ -100,7 +103,7 @@ tick.interval(function() {
   else seconds++;
 
   intervalEvents.forEach(function(listener, index, array) {
-    listener.everySecond();
+    listener.everySecond(seconds);
   });
 
 }, 1000);
@@ -109,6 +112,13 @@ game.addIntervalEvent = function(listener) {
   intervalEvents.push(listener);
 };
 
+game.addMinuteListener = function(listener) {
+  minuteListeners.push(listener);
+};
+
+game.addTimeout = function(listener, time) {
+  tick.timeout(listener, time);
+}
 
 /*
 * Keyboard
@@ -322,4 +332,44 @@ pizza.on('draw', function(c){
 
 var wallet = new Wallet();
 
-map.load(game, camera, "locations.json");
+var assetLoader = new AssetLoader();
+var spriteSheet = assetLoader.load("assets/setPiecesTSR.PNG");
+
+//var store = new createjs.Sprite(spriteSheet, "store");
+//console.log(spriteSheet);
+
+map.load(game, camera, spriteSheet, "locations.json");
+map.locations.forEach(function(location, index, array) {
+  console.log("location");
+  location.on('update', function(c) {
+    if (player.touches(location)) {
+      //console.log('entered location');
+      player.addBlocker(location);
+      //var touch_bb = player.boundingBox.union(location.boundingBox);
+      //console.log(player.boundingBox);
+      //console.log(touch_bb);
+      //pizza.remove();
+      //inventory.add(pizza);
+      if (location.menu) {
+        location.menu.open();
+      }
+    } else {
+      player.removeBlocker(location);
+    }
+  });
+});
+
+map.locations.forEach(function(location, index, array) {
+  var menu = new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "Here's a menu choice",
+    close_timeout: 5,
+    choices: [
+      "choice 1",
+      "choice 2"
+    ]
+  });
+
+  location.menu = menu;
+});

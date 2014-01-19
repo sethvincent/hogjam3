@@ -25,7 +25,8 @@ function Player(options){
   this.color = '#fff';
   this.visible = true;
   this.points = 00;
-  
+  this.blockers = {};
+
   this.particles = {
     jump: {
       size: 3,
@@ -33,9 +34,10 @@ function Player(options){
       color: '#b4b4ad'
     }
   }
-  
-  this.on('update', function(interval){ 
+
+  this.on('update', function(interval){
     self.input(self.keysDown);
+    self.handleBlockers();
     self.move();
     self.velocity.x *= this.friction;
     self.velocity.y *= this.friction;
@@ -46,21 +48,54 @@ function Player(options){
     c.save();
     c.fillStyle = self.color;
     c.fillRect(
-      self.position.x - this.camera.position.x, 
-      self.position.y - this.camera.position.y, 
-      self.size.x, 
+      self.position.x - this.camera.position.x,
+      self.position.y - this.camera.position.y,
+      self.size.x,
       self.size.y
     );
     c.restore();
   });
 }
- 
+
 inherits(Player, Entity);
 
 Player.prototype.move = function(){
   this.position.x += this.velocity.x * this.friction;
   this.position.y += this.velocity.y * this.friction;
 };
+
+Player.prototype.handleBlockers = function() {
+  for (var blocker in this.blockers) {
+    if (this.blockers[blocker]) {
+      var b = this.blockers[blocker];
+      var x_overlap, y_overlap;
+
+      // TODO: more intelligently do this based on center of objects
+      if (this.position.x <= (b.position.x + b.size.x) &&
+          (((b.position.x + b.size.x) - this.position.x) < this.size.x)) {
+        x_overlap = this.position.x - (b.position.x + b.size.x);
+        this.position.x -= x_overlap;
+        if (this.velocity.x < 0) {
+          this.velocity.x = 0;
+        }
+      } else if ((this.position.x + this.size.y) >= b.position.x) {
+        x_overlap = (this.position.x + this.size.x) - b.position.x;
+        this.position.x -= x_overlap + 2;
+        if (this.velocity.x < 0) {
+          this.velocity.x = 0;
+        }
+      }
+    }
+  };
+};
+
+Player.prototype.addBlocker = function(blocker) {
+  this.blockers[blocker.uid] = blocker;
+}
+
+Player.prototype.removeBlocker = function(blocker) {
+  this.blockers[blocker.uid] = false;
+}
 
 Player.prototype.boundaries = function(){
   if (this.position.x <= 0){
