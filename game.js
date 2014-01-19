@@ -20,15 +20,14 @@ var Item = require('./item');
 var Inventory = require('./inventory');
 var Wallet = require('./wallet');
 
-/* locations */
-var Shop = require('./locations/shop');
-
 /* util */
 var randomInt = require('./util/math').randomInt;
 var randomRGB = require('./util/math').randomRGB;
 var randomRGBA = require('./util/math').randomRGBA;
 
 var Meter = require('./meter');
+
+
 
 /*
 * create game object
@@ -95,7 +94,6 @@ tick.interval(function() {
 /* every second */
 var seconds = 0;
 tick.interval(function() {
-
   player.everySecond(seconds);
 
   if (seconds == 60) seconds = 0;
@@ -252,26 +250,6 @@ night.on('draw-foreground', function(c){
   c.fillRect(0, 0, game.width, game.height);
 });
 
-
-/*
-* Locations
-*/
-
-var shop = new Shop({
-	camera: camera,
-	map: map,
-	position: {
-		x: 200,
-		y: 200
-	},
-	size: {
-		x: 100,
-		y: 300
-	}
-});
-
-shop.addTo(game);
-
 //addIntervalEvent(player.everySecond);
 
 var healthMeter = new Meter({
@@ -343,3 +321,5 @@ pizza.on('draw', function(c){
 */
 
 var wallet = new Wallet();
+
+map.load(game, camera, "locations.json");

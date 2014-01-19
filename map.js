@@ -1,4 +1,6 @@
 var randomRGBA = require('./util/math').randomRGBA;
+var locations = require('./locations.json');
+var Location = require('./locations/location');
 
 module.exports = Map;
 
@@ -11,7 +13,7 @@ function Map(game, width, height){
 
 Map.prototype.generate = function(ticks){
   var context = document.createElement('canvas').getContext('2d');
-  
+
   context.canvas.width = this.width;
   context.canvas.height = this.height;
 
@@ -27,7 +29,7 @@ Map.prototype.generate = function(ticks){
   }
 
   this.image = new Image();
-  this.image.src = context.canvas.toDataURL("image/png");         
+  this.image.src = context.canvas.toDataURL("image/png");
 
   context = null;
 }
@@ -35,4 +37,23 @@ Map.prototype.generate = function(ticks){
 // draw the map adjusted to camera
 Map.prototype.draw = function(context, camera){
   context.drawImage(this.image, 0, 0, this.image.width, this.image.height, -camera.position.x, -camera.position.y, this.image.width, this.image.height);
+}
+
+Map.prototype.load = function(game, camera, filename) {
+  var map = this;
+  map.locations = [];
+
+  locations.forEach(function(location, index, array) {
+    map.locations.push(location);
+  });
+
+  map.locations.forEach(function(location, index, array) {
+    location.camera = camera;
+    location.map = map;
+
+    console.log(location);
+    var building = new Location(location);
+    building.addTo(game);
+  });
+
 }

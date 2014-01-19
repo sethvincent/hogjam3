@@ -1,0 +1,66 @@
+[
+  {
+    "hours": {
+      "open": 3,
+      "close": 18
+    },
+    "name": "Shop",
+    "color": "red",
+    "position": {
+      "x": 100,
+      "y": 100
+    },
+    "size": {
+      "x": 100,
+      "y": 100
+    }
+  },
+  {
+    "hours": {
+      "open": 9,
+      "close": 15
+    },
+    "name": "Shelter",
+    "color": "blue",
+    "position": {
+      "x": 600,
+      "y": 400
+    },
+    "size": {
+      "x": 100,
+      "y": 100
+    }
+  },
+  {
+    "hours": {
+      "open": 3,
+      "close": 9
+    },
+    "name": "Food Bank",
+    "color": "green",
+    "position": {
+      "x": 100,
+      "y": 300
+    },
+    "size": {
+      "x": 100,
+      "y": 100
+    }
+  },
+  {
+    "hours": {
+      "open": 3,
+      "close": 18
+    },
+    "name": "Office",
+    "color": "black",
+    "position": {
+      "x": 500,
+      "y": 200
+    },
+    "size": {
+      "x": 100,
+      "y": 100
+    }
+  }
+]
