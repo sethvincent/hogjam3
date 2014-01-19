@@ -78,7 +78,7 @@ tick.interval(function() {
   else minutes++;
 
   player.everyMinute();
-}, 1000);
+}, 60000);
 
 
 /* every second */
