@@ -152,7 +152,7 @@ var player = new Player({
 
 player.addTo(game);
 
-player.everySecond = function() {	
+player.everySecond = function() {
   if(game.currentScene.name == 'day'){
 
   }
