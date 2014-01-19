@@ -42,7 +42,7 @@ Map.prototype.draw = function(context, camera) {
   context.drawImage(this.image, 0, 0, this.image.width, this.image.height, -camera.position.x, -camera.position.y, this.image.width, this.image.height);
 }
 
-Map.prototype.load = function(game, camera, spritesheet, filename) {
+Map.prototype.load = function(game, camera, filename) {
   var map = this;
 
   var data = {
@@ -67,7 +67,7 @@ Map.prototype.load = function(game, camera, spritesheet, filename) {
   this.spritesheet = this.assetLoader.load(data);
 
   map.locations = [];
-  map.spritesheet = spritesheet;
+  map.spritesheet = this.spritesheet;
 
   var assetLoader = new AssetLoader();
   var data = {
