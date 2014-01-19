@@ -300,9 +300,11 @@ var inventory = new Inventory(game);
 
 var shelterFood = new Item({
   name: 'Shelter Food',
+  healthMeter: healthMeter,
   position: { x: 500, y: 140 },
   size: { x: 20, y: 20 },
-  weight: 2
+  weight: 2,
+  healing: 5
 });
 
 shelterFood.addTo(game);
@@ -328,9 +330,11 @@ shelterFood.on('draw', function(c){
 
 var basicFood = new Item({
   name: 'Basic Food',
+  healthMeter: healthMeter,
   position: { x: 450, y: 140 },
   size: { x: 20, y: 20 },
-  weight: 3
+  weight: 3,
+  healing: 10
 });
 
 basicFood.addTo(game);
@@ -356,9 +360,11 @@ basicFood.on('draw', function(c){
 
 var goodFood = new Item({
   name: 'Good Food',
+  healthMeter: healthMeter,
   position: { x: 550, y: 140 },
   size: { x: 20, y: 20 },
-  weight: 3
+  weight: 3,
+  healing: 20
 });
 
 goodFood.addTo(game);
@@ -368,37 +374,11 @@ goodFood.on('update', function(){
     console.log('Yummy Yummy Yummy I got food in my tummy!');
     goodFood.remove();
     inventory.add(goodFood);
+    goodFood.eat();
   }
 });
 
 goodFood.on('draw', function(c){
-  c.fillStyle = '#3d4f2a';
-  c.fillRect(
-    this.position.x - camera.position.x,
-    this.position.y - camera.position.y,
-    this.size.x,
-    this.size.y
-  );
-});
-
-var otherFood = new Item({
-  name: 'Other Food',
-  position: { x: 600, y: 140 },
-  size: { x: 20, y: 20 },
-  weight: 3
-});
-
-otherFood.addTo(game);
-
-otherFood.on('update', function(){
-  if (player.touches(otherFood)){
-    console.log('Yummy Yummy Yummy I got food in my tummy!');
-    otherFood.remove();
-    inventory.add(otherFood);
-  }
-});
-
-otherFood.on('draw', function(c){
   c.fillStyle = '#3d4f2a';
   c.fillRect(
     this.position.x - camera.position.x,
