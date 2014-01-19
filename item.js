@@ -25,7 +25,6 @@ function Item(options){
   };
 
   this.color = '#fff111';
-  this.healing = options.healing;
 }
 
 Item.prototype.eat = function(){
