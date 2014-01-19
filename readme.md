@@ -2,6 +2,8 @@
 > a game for the third hogjam, the impact game challenge  
 > theme: 'gaming for good'
 
+play the game here: [sethvincent.github.io/hogjam3](http://sethvincent.github.io/hogjam3/)
+
 ## team:
 - alex
 - [david](https://github.com/cloud5six)
