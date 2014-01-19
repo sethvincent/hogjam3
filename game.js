@@ -20,10 +20,6 @@ var Item = require('./item');
 var Inventory = require('./inventory');
 var Wallet = require('./wallet');
 
-/* locations */
-var Shop = require('./locations/shop');
-var Office = require('./locations/office');
-
 /* util */
 var randomInt = require('./util/math').randomInt;
 var randomRGB = require('./util/math').randomRGB;
@@ -253,45 +249,6 @@ night.on('draw-foreground', function(c){
   c.fillStyle = 'rgba(0, 0, 0, 0.5)';
   c.fillRect(0, 0, game.width, game.height);
 });
-
-
-/*
-* Locations
-*/
-
-// var shop = new Shop({
-//   camera: camera,
-//   map: map,
-//   position: {
-//     x: 200,
-//     y: 200
-//   },
-//   size: {
-//     x: 100,
-//     y: 100
-//   },
-//   hours: {
-//     open:  3,
-//     close: 18
-//   }
-// });
-
-// shop.addTo(game);
-
-// var office = new Office({
-//   camera: camera,
-//   map: map,
-//   position: {
-//     x: 500,
-//     y: 400
-//   },
-//   size: {
-//     x: 100,
-//     y: 100
-//   }
-// });
-
-// office.addTo(game);
 
 //addIntervalEvent(player.everySecond);
 
