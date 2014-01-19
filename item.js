@@ -9,6 +9,7 @@ function Item(options){
   this.game = options.game;
   this.weight = options.weight;
   this.id = this.name.replace(/ /g,'-').toLowerCase();
+  this.healthMeter = options.healthMeter || {};
 
   this.position = {
     x: options.position.x,
@@ -21,8 +22,10 @@ function Item(options){
   };
 
   this.color = '#fff111';
+  this.healing = options.healing;
 }
 
-Item.prototype.use = function(){
-  
+Item.prototype.eat = function(){
+  this.healthMeter.level += this.healing;
+  if (this.healthMeter.level += 100) this.healthMeter.level = 100;
 }
