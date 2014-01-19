@@ -8,6 +8,7 @@ function Item(options){
   this.name = options.name;
   this.game = options.game;
   this.weight = options.weight;
+  this.id = this.name.replace(/ /g,'-').toLowerCase();
 
   this.position = {
     x: options.position.x,
@@ -20,4 +21,8 @@ function Item(options){
   };
 
   this.color = '#fff111';
+}
+
+Item.prototype.use = function(){
+  
 }
