@@ -7,7 +7,7 @@ function AssetLoader(options) {
   var self = this;
 }
 
-AssetLoader.prototype.load = function(data) {
+AssetLoader.prototype.load = function(filename) {
   var spriteSheet = new createjs.SpriteSheet(data);
   return spriteSheet;
 };
