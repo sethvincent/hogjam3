@@ -21,12 +21,14 @@ Map.prototype.generate = function(ticks){
   var columns = this.width / size;
   var rows = this.height / size;
 
+  /*
   for (var x = 0, i = 0; i < columns; x+=size, i++){
     for (var y = 0, j=0; j < rows; y+=size, j++){
       context.fillStyle = randomRGBA(0, 255, 0, 255, 0, 255, 1);
       context.fillRect(x, y, size, size);
     }
   }
+  */
 
   this.image = new Image();
   this.image.src = context.canvas.toDataURL("image/png");
@@ -35,25 +37,23 @@ Map.prototype.generate = function(ticks){
 }
 
 // draw the map adjusted to camera
-Map.prototype.draw = function(context, camera){
+Map.prototype.draw = function(context, camera) {
   context.drawImage(this.image, 0, 0, this.image.width, this.image.height, -camera.position.x, -camera.position.y, this.image.width, this.image.height);
 }
 
-Map.prototype.load = function(game, camera, filename) {
+Map.prototype.load = function(game, camera, spritesheet, filename) {
   var map = this;
   map.locations = [];
 
   locations.forEach(function(location, index, array) {
-    map.locations.push(location);
-  });
-
-  map.locations.forEach(function(location, index, array) {
+    location.game = game;
     location.camera = camera;
     location.map = map;
+    location.spritesheet = spritesheet;
 
-    console.log(location);
     var building = new Location(location);
     building.addTo(game);
+    map.locations.push(building);
   });
 
 }

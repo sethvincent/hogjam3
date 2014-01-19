@@ -37,13 +37,21 @@ function Meter(options) {
   this.on('draw', function(c) {
     c.save();
 
+    var label = this.name;
+    var x_pos = this.position.x - this.camera.position.x;
+    var y_pos = this.position.y - this.camera.position.y;
+
+    c.fillStyle = "white";
+    c.font = "12px Arial";
+    c.fillText(label, x_pos - 5, y_pos + 7);
+
     c.beginPath();
     c.lineWidth = 2;
     c.strokeStyle = "black";
 
     c.fillStyle = self.color;
     c.rect(
-      self.position.x - self.camera.position.x,
+      self.position.x - self.camera.position.x + 35,
       self.position.y - self.camera.position.y,
       102,
       self.size.y + 2
@@ -51,7 +59,7 @@ function Meter(options) {
     c.stroke();
 
     c.fillRect(
-      self.position.x - self.camera.position.x + 1,
+      self.position.x - self.camera.position.x + 36,
       self.position.y - self.camera.position.y + 1,
       self.level,
       self.size.y
