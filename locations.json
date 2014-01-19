@@ -62,5 +62,21 @@
       "x": 100,
       "y": 100
     }
+  },
+  {
+    "hours": {
+      "open": 3,
+      "close": 18
+    },
+    "name": "Jail",
+    "color": "black",
+    "position": {
+      "x": 800,
+      "y": 800
+    },
+    "size": {
+      "x": 100,
+      "y": 100
+    }
   }
 ]

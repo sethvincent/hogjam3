@@ -147,7 +147,7 @@ var player = new Player({
   game: game,
   keysDown: keysDown,
   camera: camera,
-  position: { x: game.width / 2 - 10, y: game.height / 2 - 10 }
+  position: { x: 830, y: 900 }
 });
 
 player.addTo(game);
