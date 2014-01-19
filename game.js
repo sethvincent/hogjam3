@@ -404,9 +404,6 @@ goodFood.on('draw', function(c){
 
 var wallet = new Wallet();
 
-//var store = new createjs.Sprite(spriteSheet, "store");
-//console.log(spriteSheet);
-
 map.load(game, camera, "locations.json");
 
 map.locations.forEach(function(location, index, array) {
