@@ -387,6 +387,32 @@ goodFood.on('draw', function(c){
   );
 });
 
+var otherFood = new Item({
+  name: 'Other Food',
+  position: { x: 600, y: 140 },
+  size: { x: 20, y: 20 },
+  weight: 3
+});
+
+otherFood.addTo(game);
+
+otherFood.on('update', function(){
+  if (player.touches(otherFood)){
+    console.log('Yummy Yummy Yummy I got food in my tummy!');
+    otherFood.remove();
+    inventory.add(otherFood);
+  }
+});
+
+otherFood.on('draw', function(c){
+  c.fillStyle = '#3d4f2a';
+  c.fillRect(
+    this.position.x - camera.position.x,
+    this.position.y - camera.position.y,
+    this.size.x,
+    this.size.y
+  );
+});
 
 
 /*
