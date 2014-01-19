@@ -93,10 +93,13 @@ tick.interval(function() {
   });
 }, 60000);
 
-
 /* every second */
 var seconds = 0;
 tick.interval(function() {
+<<<<<<< HEAD
+=======
+	console.log('seconds', seconds);
+>>>>>>> cleanup
   player.everySecond(seconds);
 
   if (seconds == 60) seconds = 0;
@@ -135,7 +138,8 @@ var keysDown = keyboard.keysDown;
 var mouse = new Mouse(game);
 
 mouse.on('click', function(){
-
+	if (game.paused) game.resume();
+	else game.pause();
 });
 
 
@@ -152,7 +156,7 @@ var player = new Player({
 
 player.addTo(game);
 
-player.everySecond = function() {
+player.everySecond = function() {	
   if(game.currentScene.name == 'day'){
 
   }
