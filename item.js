@@ -7,9 +7,12 @@ inherits(Item, Entity);
 function Item(options){
   this.name = options.name;
   this.game = options.game;
-  this.weight = options.weight;
-  this.id = this.name.replace(/ /g,'-').toLowerCase();
+  this.inventory = options.inventory;
   this.healthMeter = options.healthMeter || {};
+
+  this.weight = options.weight;
+  this.healing = options.healing;
+  this.id = this.name.replace(/ /g,'-').toLowerCase();
 
   this.position = {
     x: options.position.x,
@@ -22,10 +25,10 @@ function Item(options){
   };
 
   this.color = '#fff111';
-  this.healing = options.healing;
 }
 
 Item.prototype.eat = function(){
   this.healthMeter.level += this.healing;
   if (this.healthMeter.level >= 100) this.healthMeter.level = 100;
+  this.inventory.remove(this);
 }
