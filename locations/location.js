@@ -12,6 +12,8 @@ function Location(options){
   this.camera = options.camera;
   this.color = options.color;
   this.name = options.name;
+  this.id = this.name.replace(/ /g,'_').toLowerCase();
+
   if (options.hasOwnProperty("spritesheet")) {
     this.spritesheet = options.spritesheet;
   }
