@@ -64,7 +64,7 @@ function Location(options){
 
     c.fillStyle = "white";
     c.font = "12px Arial";
-    c.fillText(status, x_pos + 30, y_pos + 85);
+    c.fillText(status, x_pos + 22, y_pos + 85);
 
     c.restore();
   });

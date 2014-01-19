@@ -311,7 +311,9 @@ shelterFood.on('update', function(){
 	if (player.touches(shelterFood)){
 		console.log('hmm, guess this will do for now');
 		shelterFood.remove();
-    inventory.add(shelterFood);
+          inventory.add(shelterFood);
+          energyMeter.add(10);
+          healthMeter.add(5);
 	}
 });
 
@@ -340,6 +342,8 @@ basicFood.on('update', function(){
     console.log('mmm mmmm good!');
     basicFood.remove();
     inventory.add(basicFood);
+    energyMeter.add(15);
+    healthMeter.add(10);
   }
 });
 
@@ -368,6 +372,8 @@ goodFood.on('update', function(){
     console.log('Yummy Yummy Yummy I got food in my tummy!');
     goodFood.remove();
     inventory.add(goodFood);
+    energyMeter.add(20);
+    healthMeter.add(15);
   }
 });
 
@@ -389,11 +395,27 @@ goodFood.on('draw', function(c){
 
 var wallet = new Wallet();
 
-var assetLoader = new AssetLoader();
-var spriteSheet = assetLoader.load("assets/setPiecesTSR.PNG");
-
 //var store = new createjs.Sprite(spriteSheet, "store");
 //console.log(spriteSheet);
+
+var assetLoader = new AssetLoader();
+var data = {
+  images: [ "assets/setPiecesTSR.PNG" ],
+  frames: [
+    [3, 170, 81, 64, 0],
+    [86, 170, 81, 64, 0],
+    [168, 170, 81, 64, 0],
+    [250, 170, 81, 64, 0]
+  ],
+  animations: {
+    Shop: 0,
+    Shelter: 1,
+    "Food Bank": 2,
+    Office: 3
+  }
+};
+
+var spriteSheet = assetLoader.load("assets/setPiecesTSR.PNG", data);
 
 map.load(game, camera, spriteSheet, "locations.json");
 map.locations.forEach(function(location, index, array) {

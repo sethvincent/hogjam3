@@ -1,6 +1,7 @@
 var randomRGBA = require('./util/math').randomRGBA;
 var locations = require('./locations.json');
 var Location = require('./locations/location');
+var AssetLoader = require('./asset_loader');
 
 module.exports = Map;
 
@@ -43,6 +44,7 @@ Map.prototype.draw = function(context, camera) {
 
 Map.prototype.load = function(game, camera, spritesheet, filename) {
   var map = this;
+
   map.locations = [];
 
   locations.forEach(function(location, index, array) {

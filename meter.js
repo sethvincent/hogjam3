@@ -69,3 +69,21 @@ function Meter(options) {
 };
 
 inherits(Meter, Entity);
+
+// Add value to this meter
+Meter.prototype.add = function(value) {
+  var new_level = this.level += value;
+  if (new_level > 100) {
+    new_level = 100;
+  }
+  this.level = new_level;
+}
+
+// Remove value to this meter
+Meter.prototype.remove = function(value) {
+  var new_level = this.level -= value;
+  if (new_level < 0) {
+    new_level = 0;
+  }
+  this.level = new_level;
+}

@@ -7,22 +7,19 @@ function AssetLoader(options) {
   var self = this;
 }
 
-AssetLoader.prototype.load = function(filename) {
-  var data = {
-    images: [ filename ],
-    frames: [
-      [3, 170, 81, 64, 0],
-      [86, 170, 81, 64, 0],
-      [168, 170, 81, 64, 0],
-      [250, 170, 81, 64, 0]
-    ],
-    animations: {
-      Shop: 0,
-      Shelter: 1,
-      "Food Bank": 2,
-      Office: 3
-    }
-  };
+AssetLoader.prototype.load = function(filename, data) {
   var spriteSheet = new createjs.SpriteSheet(data);
   return spriteSheet;
+};
+
+AssetLoader.prototype.drawSprite = function(c, sprite, x, y, frame) {
+  sprite._normalizeFrame();
+  if (!frame) {
+    frame = 0;
+  }
+  var o = sprite.spriteSheet.getFrame(sprite._currentFrame | frame);
+  if (!o) { return false; }
+  var rect = o.rect;
+  c.drawImage(o.image, rect.x, rect.y, rect.width, rect.height,
+              x, y, rect.width, rect.height);
 };
