@@ -1059,13 +1059,15 @@ AssetLoader.prototype.load = function(filename) {
       [3, 170, 81, 64, 0],
       [86, 170, 81, 64, 0],
       [168, 170, 81, 64, 0],
+      [250, 170, 81, 64, 0],
       [250, 170, 81, 64, 0]
     ],
     animations: {
       Shop: 0,
       Shelter: 1,
       "Food Bank": 2,
-      Office: 3
+      Office: 3,
+      Jail: 4
     }
   };
   var spriteSheet = new createjs.SpriteSheet(data);
@@ -1351,12 +1353,12 @@ var player = new Player({
   game: game,
   keysDown: keysDown,
   camera: camera,
-  position: { x: game.width / 2 - 10, y: game.height / 2 - 10 }
+  position: { x: 830, y: 900 }
 });
 
 player.addTo(game);
 
-player.everySecond = function() {	
+player.everySecond = function() {
   if(game.currentScene.name == 'day'){
 
   }
@@ -1504,9 +1506,12 @@ var inventory = new Inventory(game);
 
 var shelterFood = new Item({
   name: 'Shelter Food',
+  healthMeter: healthMeter,
+  inventory: inventory,
   position: { x: 500, y: 140 },
   size: { x: 20, y: 20 },
-  weight: 2
+  weight: 2,
+  healing: 5
 });
 
 shelterFood.addTo(game);
@@ -1532,9 +1537,12 @@ shelterFood.on('draw', function(c){
 
 var basicFood = new Item({
   name: 'Basic Food',
+  healthMeter: healthMeter,
+  inventory: inventory,
   position: { x: 450, y: 140 },
   size: { x: 20, y: 20 },
-  weight: 3
+  weight: 3,
+  healing: 10
 });
 
 basicFood.addTo(game);
@@ -1560,9 +1568,12 @@ basicFood.on('draw', function(c){
 
 var goodFood = new Item({
   name: 'Good Food',
+  healthMeter: healthMeter,
+  inventory: inventory,
   position: { x: 550, y: 140 },
   size: { x: 20, y: 20 },
-  weight: 3
+  weight: 3,
+  healing: 20
 });
 
 goodFood.addTo(game);
@@ -1572,6 +1583,7 @@ goodFood.on('update', function(){
     console.log('Yummy Yummy Yummy I got food in my tummy!');
     goodFood.remove();
     inventory.add(goodFood);
+    goodFood.eat();
   }
 });
 
@@ -1586,7 +1598,6 @@ goodFood.on('draw', function(c){
 });
 
 
-
 /*
 * Wallet
 */
@@ -1596,23 +1607,18 @@ var wallet = new Wallet();
 var assetLoader = new AssetLoader();
 var spriteSheet = assetLoader.load("assets/setPiecesTSR.PNG");
 
-//var store = new createjs.Sprite(spriteSheet, "store");
-//console.log(spriteSheet);
-
 map.load(game, camera, spriteSheet, "locations.json");
 map.locations.forEach(function(location, index, array) {
   console.log("location");
   location.on('update', function(c) {
     if (player.touches(location)) {
-      //console.log('entered location');
       player.addBlocker(location);
-      //var touch_bb = player.boundingBox.union(location.boundingBox);
-      //console.log(player.boundingBox);
-      //console.log(touch_bb);
-      //pizza.remove();
-      //inventory.add(pizza);
       if (location.menu) {
-        location.menu.open();
+        if (!location.menu.opened) {
+          location.menu.opened = true;
+          console.log("opening");
+          location.menu.open();
+        }
       }
     } else {
       player.removeBlocker(location);
@@ -1620,20 +1626,63 @@ map.locations.forEach(function(location, index, array) {
   });
 });
 
-map.locations.forEach(function(location, index, array) {
-  var menu = new Menu({
+var menus = {
+  shop: new Menu({
     game: game,
     window: document.getElementById("dialog"),
-    message: "Here's a menu choice",
+    message: "Welcome to the store, please have a look around and let me know what you would like to purchase",
     close_timeout: 5,
     choices: [
-      "choice 1",
-      "choice 2"
+      { "name": "choice1", "value": "choice 1" },
+      { "name": "choice2", "value": "choice 2" }
     ]
-  });
+  }),
+  shelter: new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "Welcome to the shelter.",
+    close_timeout: 5,
+    choices: [
+      { "name": "choice1", "value": "choice 1" },
+      { "name": "choice2", "value": "choice 2" }
+    ]
+  }),
+  food_bank: new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "Welcome to the Food bank",
+    close_timeout: 5,
+    choices: [
+      { "name": "choice1", "value": "choice 1" },
+      { "name": "choice2", "value": "choice 2" }
+    ]
+  }),
+  office: new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "Welcome to the store, please have a look around and let me know what you would like to purchase",
+    close_timeout: 5,
+    choices: [
+      { "name": "choice1", "value": "choice 1" },
+      { "name": "choice2", "value": "choice 2" }
+    ]
+  }),
+  jail: new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "Since you have behaved yourself in jail you are being released.",
+    close_timeout: 5,
+    choices: [
+      { "name": "choice1", "value": "choice 1" },
+      { "name": "choice2", "value": "choice 2" }
+    ]
+  })
+};
 
-  location.menu = menu;
+map.locations.forEach(function(location, index, array) {
+  location.menu = menus[location.id];
 });
+
 },{"./asset_loader":4,"./camera":5,"./inventory":7,"./item":8,"./map":11,"./menu":12,"./meter":13,"./player":28,"./util/math":29,"./wallet":30,"crtrdg-gameloop":18,"crtrdg-keyboard":21,"crtrdg-mouse":24,"crtrdg-scene":25,"tic":27}],7:[function(require,module,exports){
 var inherits = require('inherits');
 
@@ -1670,91 +1719,55 @@ Inventory.prototype.createHTML = function(){
 
 Inventory.prototype.add = function(item){
   var self = this;
+  var items = this.game.inventory;
 
-  this.findItem(item.name, function(exists, items){
-
-    if (exists === false){
-
-      items[item.name] = {
-        item: item,
-        quantity: 1
-      }
-
-      self.currentWeight += item.weight;
-      self.weightEl.innerHTML = self.currentWeight + '/' + self.maxWeight;
-
-      var li = document.createElement('li');
-      li.innerHTML = item.name;
-      li.id = item.name;
-      self.el.appendChild(li);
-
-    } else {
-      items[item.name].quantity += 1;
+  if (!items[item.id]){
+    items[item.id] = {
+      item: item,
+      quantity: 1
     }
 
-  });
+    this.addWeight(item.weight);
+
+    var li = document.createElement('li');
+    li.innerHTML = item.name;
+    li.id = item.id;
+    self.el.appendChild(li);
+
+  } else {
+    items[item.id].quantity += 1;
+  }
 };
 
 Inventory.prototype.remove = function(item){
-  var self = this;
+  var items = this.game.inventory;
 
-  this.findItem(item.name, function(exists, items){
-    if (exists){
-      if (items[item.name].quantity > 1){
-        items[item.name].quantity -= 1;
-      } else {
-        delete items[item.name];
-        var itemEl = document.getElementById(item.name);
-        self.el.removeChild(itemEl);
-      }
+  if (items[item.id]){
+    if (items[item.id].quantity > 1){
+        items[item.id].quantity -= 1;
+    } else {
+      delete items[item.id];
+      var itemEl = document.getElementById(item.id);
+      this.el.removeChild(itemEl);
     }
-  });
+  }
+
+  this.removeWeight(item.weight);
 };
 
 Inventory.prototype.list = function(){
   return this.game.inventory.join(', ');
 };
 
-Inventory.prototype.findItem = function(itemNameToFind, callback){
-  if (this.isEmpty()){
-    return callback(false, this.game.inventory);
-  }
+Inventory.prototype.addWeight = function(weight){
+  this.currentWeight += weight;
+  this.weightEl.innerHTML = this.currentWeight + '/' + this.maxWeight;
+}
 
-  this.each(function(item, items){
-    if (itemNameToFind === item){
-      return callback(true, items);
-    } else {
-      return callback(false, items);
-    }
-  });
-};
-
-Inventory.prototype.hasItem = function hasItem(itemName, callback){
-  this.findItem(itemName, function(exists, items){
-    if (exists){
-      return callback(true);
-    } else {
-      return callback(false);
-    }
-  });
-};
-
-Inventory.prototype.each = function each(callback){
-  for (var item in this.game.inventory){
-    callback(item, this.game.inventory);
-  }
-};
-
-Inventory.prototype.isEmpty = function isEmpty(){
-  var inventory = this.game.inventory;
-
-  for(var item in inventory) {
-    if(inventory.hasOwnProperty(item)){
-      return false;
-    }      
-  }
-  return true;
-};
+Inventory.prototype.removeWeight = function(weight){
+  this.currentWeight -= weight;
+  this.weightEl.innerHTML = this.currentWeight + '/' + this.maxWeight;
+}
 },{"inherits":26}],8:[function(require,module,exports){
 var inherits = require('inherits');
 var Entity = require('crtrdg-entity');
@@ -1765,7 +1778,12 @@ inherits(Item, Entity);
 function Item(options){
   this.name = options.name;
   this.game = options.game;
+  this.inventory = options.inventory;
+  this.healthMeter = options.healthMeter || {};
+
   this.weight = options.weight;
+  this.healing = options.healing;
+  this.id = this.name.replace(/ /g,'_').toLowerCase();
 
   this.position = {
     x: options.position.x,
@@ -1778,6 +1796,12 @@ function Item(options){
   };
 
   this.color = '#fff111';
+}
+
+Item.prototype.eat = function(){
+  this.healthMeter.level += this.healing;
+  if (this.healthMeter.level >= 100) this.healthMeter.level = 100;
+  this.inventory.remove(this);
 }
 },{"crtrdg-entity":14,"inherits":26}],9:[function(require,module,exports){
 module.exports=[
@@ -1844,6 +1868,22 @@ module.exports=[
       "x": 100,
       "y": 100
     }
+  },
+  {
+    "hours": {
+      "open": 3,
+      "close": 18
+    },
+    "name": "Jail",
+    "color": "black",
+    "position": {
+      "x": 800,
+      "y": 800
+    },
+    "size": {
+      "x": 100,
+      "y": 100
+    }
   }
 ]
 
@@ -1862,6 +1902,8 @@ function Location(options){
   this.camera = options.camera;
   this.color = options.color;
   this.name = options.name;
+  this.id = this.name.replace(/ /g,'_').toLowerCase();
+
   if (options.hasOwnProperty("spritesheet")) {
     this.spritesheet = options.spritesheet;
   }
@@ -2003,7 +2045,6 @@ Map.prototype.load = function(game, camera, spritesheet, filename) {
 var tic = require('tic')();
 
 module.exports = Menu;
-//inherits(, EventEmitter);
 
 function Menu(options){
   var options = options || {};
@@ -2015,24 +2056,68 @@ function Menu(options){
   this.game = options.game;
   this.close_timeout = options.close_timeout;
   this.opened = false;
+
+  var okButton = document.getElementById("dialog-ok-button");
+  var cancelButton = document.getElementById("dialog-cancel-button");
+
+  okButton.addEventListener('click', function(event) {
+    self.close();
+    if (self.okCallback) {
+      okCallback(self.choice);
+    }
+  });
+
+  cancelButton.addEventListener('click', function(event) {
+    self.close();
+    if (self.cancelCallback) {
+      cancelCallback(self.choice);
+    }
+  });
 }
 
-Menu.prototype.open = function() {
+Menu.prototype.open = function(okCallback, cancelCallback) {
   var self = this;
-  if (!this.opened) {
-    this.opened = true;
-    /* We need to have the timer thread / window open the dialog
-       so that it can be closed by the close timer */
-    var openTimeout = this.game.addTimeout(function() {
-      self.window.style.visibility = "visible";
-    }, 1);
 
-    var closeTimeout = this.game.addTimeout(function() {
-      self.close();
-    }, 1000 * this.close_timeout);
-  //this.game.addIntervalEvent(this);
+  this.cancelCallback = cancelCallback;
+  this.okCallback = okCallback;
 
+  var elements = self.window.getElementsByClassName("message");
+  if (elements.length == 1) {
+    elements[0].innerHTML = this.message;
   }
+  var form = document.getElementById("choice-form");
+
+  while (form.firstChild) {
+    form.removeChild(form.firstChild);
+  }
+
+  this.choices.forEach(function(choice, index, array) {
+    var p = document.createElement('p');
+    var e = document.createElement('input');
+    e.setAttribute('type', 'radio');
+    e.setAttribute('name', 'choice');
+    e.setAttribute('value', choice.name);
+
+    e.addEventListener('change', function(event) {
+      self.choice = e.getAttribute('value');
+    });
+
+    e.innerHTML = choice.value;
+    var t = document.createTextNode(choice.value);
+    p.appendChild(e);
+    p.appendChild(t);
+    form.appendChild(p);
+  });
+
+  /* We need to have the timer thread / window open the dialog
+     so that it can be closed by the close timer */
+  var openTimeout = this.game.addTimeout(function() {
+    self.window.style.visibility = "visible";
+  }, 1);
+
+  var closeTimeout = this.game.addTimeout(function() {
+    self.close();
+  }, 1000 * this.close_timeout);
 }
 
 Menu.prototype.close = function() {
@@ -2057,7 +2142,7 @@ function Meter(options) {
   var self = this;
 
   this.level = 100;
-  this.size = { y: 10 };
+  this.size = { y: 11 };
 
   if (options.hasOwnProperty("name")) {
     this.name = options.name;
@@ -2091,7 +2176,7 @@ function Meter(options) {
 
     c.fillStyle = "white";
     c.font = "12px Arial";
-    c.fillText(label, x_pos - 5, y_pos + 7);
+    c.fillText(label, x_pos - 5, y_pos + 9);
 
     c.beginPath();
     c.lineWidth = 2;
@@ -2099,7 +2184,7 @@ function Meter(options) {
 
     c.fillStyle = self.color;
     c.rect(
-      self.position.x - self.camera.position.x + 35,
+      self.position.x - self.camera.position.x + 45,
       self.position.y - self.camera.position.y,
       102,
       self.size.y + 2
@@ -2107,7 +2192,7 @@ function Meter(options) {
     c.stroke();
 
     c.fillRect(
-      self.position.x - self.camera.position.x + 36,
+      self.position.x - self.camera.position.x + 46,
       self.position.y - self.camera.position.y + 1,
       self.level,
       self.size.y
@@ -5982,7 +6067,7 @@ Player.prototype.handleBlockers = function() {
       if (this.position.x <= (b.position.x + b.size.x) &&
           (((b.position.x + b.size.x) - this.position.x) < this.size.x)) {
         x_overlap = this.position.x - (b.position.x + b.size.x);
-        this.position.x -= x_overlap;
+        this.position.x -= x_overlap - 1;
         if (this.velocity.x < 0) {
           this.velocity.x = 0;
         }
