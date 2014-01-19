@@ -9,7 +9,6 @@ var Keyboard = require('crtrdg-keyboard');
 var Mouse = require('crtrdg-mouse');
 var SceneManager = require('crtrdg-scene');
 
-
 /*
 * custom modules
 */
@@ -26,6 +25,7 @@ var randomInt = require('./util/math').randomInt;
 var randomRGB = require('./util/math').randomRGB;
 var randomRGBA = require('./util/math').randomRGBA;
 
+var Meter = require('./meter');
 
 /*
 * create game object
@@ -70,12 +70,13 @@ game.on('draw-foreground', function(context){
 * Counter stuff
 */
 
+// Global list of counter listeners
+intervalEvents = [];
+
 /* every minute */
 
 var minutes = 0;
 tick.interval(function() {
-  console.log('minutes', minutes);
-
   if(minutes === 0) scene.set(day);
   if(minutes === 5) scene.set(night);
 
@@ -89,7 +90,6 @@ tick.interval(function() {
 
 
 /* every second */
-
 var seconds = 0;
 tick.interval(function() {
   console.log('seconds', seconds)
@@ -98,7 +98,16 @@ tick.interval(function() {
 
   if (seconds == 60) seconds = 0;
   else seconds++;
+
+  intervalEvents.forEach(function(listener, index, array) {
+    listener.everySecond();
+  });
+
 }, 1000);
+
+game.addIntervalEvent = function(listener) {
+  intervalEvents.push(listener);
+};
 
 
 /*
@@ -133,8 +142,8 @@ var player = new Player({
 
 player.addTo(game);
 
-player.everySecond = function(){
-	if(game.currentScene.name == 'day'){
+player.everySecond = function() {
+  if(game.currentScene.name == 'day'){
 
   }
 
@@ -172,7 +181,7 @@ var camera = new Camera({
 });
 
 
-/* 
+/*
 * Scenes
 */
 
@@ -242,6 +251,7 @@ night.on('draw-foreground', function(c){
 });
 
 
+
 /*
 * Locations
 */
@@ -260,3 +270,32 @@ var shop = new Shop({
 });
 
 shop.addTo(game);
+
+//addIntervalEvent(player.everySecond);
+
+var healthMeter = new Meter({
+  game: game,
+  camera: camera,
+  name: "health",
+  color: "red",
+  position: { x: 10, y: 10 }
+});
+healthMeter.addTo(game);
+
+var energyMeter = new Meter({
+  game: game,
+  camera: camera,
+  name: "energy",
+  color: "blue",
+  position: { x: 10, y: 30 }
+});
+energyMeter.addTo(game);
+
+var moneyMeter = new Meter({
+  game: game,
+  camera: camera,
+  name: "money",
+  color: "green",
+  position: { x: 10, y: 50 }
+});
+moneyMeter.addTo(game);
