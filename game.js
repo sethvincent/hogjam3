@@ -1,4 +1,5 @@
 var tick = require('tic')();
+var buzz = require('buzz');
 
 /*
 * crtrdg.js modules
@@ -66,6 +67,15 @@ game.on('draw-background', function(context){
 game.on('draw-foreground', function(context){
 	game.currentScene.emit('draw-foreground', context);
 });
+
+
+/*
+* Sounds
+*/
+
+var soundOne = new buzz.sound('./sounds/01.mp3');
+
+soundOne.play().loop();
 
 
 /*
