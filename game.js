@@ -301,6 +301,7 @@ var inventory = new Inventory(game);
 var shelterFood = new Item({
   name: 'Shelter Food',
   healthMeter: healthMeter,
+  inventory: inventory,
   position: { x: 500, y: 140 },
   size: { x: 20, y: 20 },
   weight: 2,
@@ -331,6 +332,7 @@ shelterFood.on('draw', function(c){
 var basicFood = new Item({
   name: 'Basic Food',
   healthMeter: healthMeter,
+  inventory: inventory,
   position: { x: 450, y: 140 },
   size: { x: 20, y: 20 },
   weight: 3,
@@ -361,6 +363,7 @@ basicFood.on('draw', function(c){
 var goodFood = new Item({
   name: 'Good Food',
   healthMeter: healthMeter,
+  inventory: inventory,
   position: { x: 550, y: 140 },
   size: { x: 20, y: 20 },
   weight: 3,
