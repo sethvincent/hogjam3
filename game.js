@@ -22,6 +22,7 @@ var Wallet = require('./wallet');
 
 /* locations */
 var Shop = require('./locations/shop');
+var Office = require('./locations/office');
 
 /* util */
 var randomInt = require('./util/math').randomInt;
@@ -29,6 +30,8 @@ var randomRGB = require('./util/math').randomRGB;
 var randomRGBA = require('./util/math').randomRGBA;
 
 var Meter = require('./meter');
+
+
 
 /*
 * create game object
@@ -95,7 +98,6 @@ tick.interval(function() {
 /* every second */
 var seconds = 0;
 tick.interval(function() {
-
   player.everySecond(seconds);
 
   if (seconds == 60) seconds = 0;
@@ -257,20 +259,39 @@ night.on('draw-foreground', function(c){
 * Locations
 */
 
-var shop = new Shop({
-	camera: camera,
-	map: map,
-	position: {
-		x: 200,
-		y: 200
-	},
-	size: {
-		x: 100,
-		y: 300
-	}
-});
+// var shop = new Shop({
+//   camera: camera,
+//   map: map,
+//   position: {
+//     x: 200,
+//     y: 200
+//   },
+//   size: {
+//     x: 100,
+//     y: 100
+//   },
+//   hours: {
+//     open:  3,
+//     close: 18
+//   }
+// });
 
-shop.addTo(game);
+// shop.addTo(game);
+
+// var office = new Office({
+//   camera: camera,
+//   map: map,
+//   position: {
+//     x: 500,
+//     y: 400
+//   },
+//   size: {
+//     x: 100,
+//     y: 100
+//   }
+// });
+
+// office.addTo(game);
 
 //addIntervalEvent(player.everySecond);
 
@@ -343,3 +364,5 @@ pizza.on('draw', function(c){
 */
 
 var wallet = new Wallet();
+
+map.load(game, camera, "locations.json");
