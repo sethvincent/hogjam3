@@ -45,13 +45,34 @@ Map.prototype.draw = function(context, camera) {
 Map.prototype.load = function(game, camera, spritesheet, filename) {
   var map = this;
 
+  var data = {
+    images: [ "assets/setPiecesTSR.PNG" ],
+    frames: [
+      [3, 170, 81, 64, 0],
+      [86, 170, 81, 64, 0],
+      [168, 170, 81, 64, 0],
+      [250, 170, 81, 64, 0],
+      [250, 170, 81, 64, 0]
+    ],
+    animations: {
+      Shop: 0,
+      Shelter: 1,
+      "Food Bank": 2,
+      Office: 3,
+      Jail: 4
+    }
+  };
+
+  this.assetLoader = new AssetLoader();
+  this.spritesheet = this.assetLoader.load(data);
+
   map.locations = [];
 
   locations.forEach(function(location, index, array) {
     location.game = game;
     location.camera = camera;
     location.map = map;
-    location.spritesheet = spritesheet;
+    location.spritesheet = map.spritesheet;
 
     var building = new Location(location);
     building.addTo(game);

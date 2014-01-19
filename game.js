@@ -147,7 +147,7 @@ var player = new Player({
   game: game,
   keysDown: keysDown,
   camera: camera,
-  position: { x: game.width / 2 - 10, y: game.height / 2 - 10 }
+  position: { x: 830, y: 900 }
 });
 
 player.addTo(game);
@@ -424,26 +424,7 @@ var wallet = new Wallet();
 //var store = new createjs.Sprite(spriteSheet, "store");
 //console.log(spriteSheet);
 
-var assetLoader = new AssetLoader();
-var data = {
-  images: [ "assets/setPiecesTSR.PNG" ],
-  frames: [
-    [3, 170, 81, 64, 0],
-    [86, 170, 81, 64, 0],
-    [168, 170, 81, 64, 0],
-    [250, 170, 81, 64, 0]
-  ],
-  animations: {
-    Shop: 0,
-    Shelter: 1,
-    "Food Bank": 2,
-    Office: 3
-  }
-};
-
-var spriteSheet = assetLoader.load("assets/setPiecesTSR.PNG", data);
-
-map.load(game, camera, spriteSheet, "locations.json");
+map.load(game, camera, "locations.json");
 map.locations.forEach(function(location, index, array) {
   console.log("location");
   location.on('update', function(c) {

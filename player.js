@@ -57,7 +57,7 @@ function Player(options){
     }
   };
   this.assetLoader = new AssetLoader();
-  var spriteSheet = this.assetLoader.load("assets/setPiecesTSR.PNG", assetData);
+  var spriteSheet = this.assetLoader.load(assetData);
 
   this.anims = {
     "up": new createjs.Sprite(spriteSheet, "up"),
