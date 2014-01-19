@@ -69,21 +69,16 @@ game.on('draw-foreground', function(context){
 
 var minutes = 0;
 tick.interval(function() {
-  minutes++;
   console.log('minutes', minutes);
 
-  if(minutes === 5 && game.currentScene.name == 'day'){
-  	scene.set(night);
-  	minutes = 0;
-  }
+  if(minutes === 0) scene.set(day);
+  if(minutes === 5) scene.set(night);
 
-  if(minutes === 3 && game.currentScene.name == 'night'){
-  	scene.set(day);
-  	minutes = 0;
-  }
+  if (minutes == 8) minutes = 0;
+  else minutes++;
 
   player.everyMinute();
-}, 60000);
+}, 1000);
 
 
 /* every second */
