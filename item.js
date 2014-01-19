@@ -12,7 +12,7 @@ function Item(options){
 
   this.weight = options.weight;
   this.healing = options.healing;
-  this.id = this.name.replace(/ /g,'-').toLowerCase();
+  this.id = this.name.replace(/ /g,'_').toLowerCase();
 
   this.position = {
     x: options.position.x,

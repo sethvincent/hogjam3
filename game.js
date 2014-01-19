@@ -408,6 +408,7 @@ var wallet = new Wallet();
 //console.log(spriteSheet);
 
 map.load(game, camera, "locations.json");
+
 map.locations.forEach(function(location, index, array) {
   console.log("location");
   location.on('update', function(c) {
@@ -426,17 +427,59 @@ map.locations.forEach(function(location, index, array) {
   });
 });
 
-map.locations.forEach(function(location, index, array) {
-  var menu = new Menu({
+var menus = {
+  shop: new Menu({
     game: game,
     window: document.getElementById("dialog"),
-    message: "Here's a menu choice",
+    message: "Welcome to the store, please have a look around and let me know what you would like to purchase",
     close_timeout: 5,
     choices: [
       { "name": "choice1", "value": "choice 1" },
       { "name": "choice2", "value": "choice 2" }
     ]
-  });
+  }),
+  shelter: new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "Welcome to the shelter.",
+    close_timeout: 5,
+    choices: [
+      { "name": "choice1", "value": "choice 1" },
+      { "name": "choice2", "value": "choice 2" }
+    ]
+  }),
+  food_bank: new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "Welcome to the Food bank",
+    close_timeout: 5,
+    choices: [
+      { "name": "choice1", "value": "choice 1" },
+      { "name": "choice2", "value": "choice 2" }
+    ]
+  }),
+  office: new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "Welcome to the store, please have a look around and let me know what you would like to purchase",
+    close_timeout: 5,
+    choices: [
+      { "name": "choice1", "value": "choice 1" },
+      { "name": "choice2", "value": "choice 2" }
+    ]
+  }),
+  jail: new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "Since you have behaved yourself in jail you are being released.",
+    close_timeout: 5,
+    choices: [
+      { "name": "choice1", "value": "choice 1" },
+      { "name": "choice2", "value": "choice 2" }
+    ]
+  })
+};
 
-  location.menu = menu;
+map.locations.forEach(function(location, index, array) {
+  location.menu = menus[location.id];
 });
