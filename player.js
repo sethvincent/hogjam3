@@ -74,7 +74,7 @@ Player.prototype.handleBlockers = function() {
       if (this.position.x <= (b.position.x + b.size.x) &&
           (((b.position.x + b.size.x) - this.position.x) < this.size.x)) {
         x_overlap = this.position.x - (b.position.x + b.size.x);
-        this.position.x -= x_overlap;
+        this.position.x -= x_overlap - 1;
         if (this.velocity.x < 0) {
           this.velocity.x = 0;
         }

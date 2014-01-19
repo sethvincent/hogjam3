@@ -9,7 +9,7 @@ function Meter(options) {
   var self = this;
 
   this.level = 100;
-  this.size = { y: 10 };
+  this.size = { y: 11 };
 
   if (options.hasOwnProperty("name")) {
     this.name = options.name;
@@ -43,7 +43,7 @@ function Meter(options) {
 
     c.fillStyle = "white";
     c.font = "12px Arial";
-    c.fillText(label, x_pos - 5, y_pos + 7);
+    c.fillText(label, x_pos - 5, y_pos + 9);
 
     c.beginPath();
     c.lineWidth = 2;
@@ -51,7 +51,7 @@ function Meter(options) {
 
     c.fillStyle = self.color;
     c.rect(
-      self.position.x - self.camera.position.x + 35,
+      self.position.x - self.camera.position.x + 45,
       self.position.y - self.camera.position.y,
       102,
       self.size.y + 2
@@ -59,7 +59,7 @@ function Meter(options) {
     c.stroke();
 
     c.fillRect(
-      self.position.x - self.camera.position.x + 36,
+      self.position.x - self.camera.position.x + 46,
       self.position.y - self.camera.position.y + 1,
       self.level,
       self.size.y
