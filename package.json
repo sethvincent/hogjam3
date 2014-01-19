@@ -16,7 +16,9 @@
     "crtrdg-mouse": "0.0.3",
     "crtrdg-entity": "0.0.8",
     "tic": "~0.2.1",
-    "crtrdg-scene": "0.0.2"
+    "crtrdg-scene": "0.0.2",
+    "beefy": "~0.7.1",
+    "browserify": "~3.20.0"
   },
   "devDependencies": {}
 }
