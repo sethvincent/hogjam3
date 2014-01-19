@@ -53,10 +53,11 @@ game.on('draw-background', function(context){
   context.fillStyle = 'rgb(100, 200, 150)';
   context.fillRect(0, 0, game.width, game.height);
   map.draw(context, camera);
+  game.currentScene.emit('draw-background', context);
 });
 
 game.on('draw-foreground', function(context){
-
+	game.currentScene.emit('draw-foreground', context);
 });
 
 
@@ -198,6 +199,14 @@ day.on('draw', function(context){
 
 });
 
+day.on('draw-background', function(c){
+
+});
+
+day.on('draw-foreground', function(c){
+  c.fillStyle = 'rgba(255, 255, 255, 0.2)';
+  c.fillRect(0, 0, game.width, game.height);
+});
 
 /*
 * Night
@@ -216,6 +225,14 @@ night.on('update', function(interval){
 });
 
 night.on('draw', function(c){
+
+});
+
+night.on('draw-background', function(c){
+
+});
+
+night.on('draw-foreground', function(c){
   c.fillStyle = 'rgba(0, 0, 0, 0.3)';
   c.fillRect(0, 0, game.width, game.height);
 });
