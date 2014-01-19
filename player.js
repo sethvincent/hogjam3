@@ -18,7 +18,7 @@ function Player(options){
   this.velocity = { x: 0, y: 0 };
   this.position = options.position;
 
-  this.speed = 5;
+  this.speed = 8;
   this.friction = 0.4;
   this.health = 100;
   this.strength = 5;

@@ -14,7 +14,9 @@
     "crtrdg-keyboard": "0.0.2",
     "crtrdg-gameloop": "~0.1.0",
     "crtrdg-mouse": "0.0.3",
-    "crtrdg-entity": "0.0.8"
+    "crtrdg-entity": "0.0.8",
+    "tic": "~0.2.1",
+    "crtrdg-scene": "0.0.2"
   },
   "devDependencies": {}
 }

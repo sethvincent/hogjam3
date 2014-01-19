@@ -1,3 +1,5 @@
+var tick = require('tic')();
+
 /*
 * crtrdg.js modules
 */
@@ -5,6 +7,7 @@
 var Game = require('crtrdg-gameloop');
 var Keyboard = require('crtrdg-keyboard');
 var Mouse = require('crtrdg-mouse');
+var SceneManager = require('crtrdg-scene');
 
 
 /*
@@ -39,8 +42,8 @@ game.on('resume', function(){
 });
 
 game.on('update', function(interval){
-
-})
+	tick.tick(interval);
+});
 
 game.on('draw', function(c){
 
@@ -55,6 +58,43 @@ game.on('draw-background', function(context){
 game.on('draw-foreground', function(context){
 
 });
+
+
+/*
+* Counter stuff
+*/
+
+/* every minute */
+
+var minutes = 0;
+tick.interval(function() {
+  minutes++;
+  console.log('minutes', minutes);
+
+  if(minutes === 5 && game.currentScene.name == 'day'){
+  	scene.set(night);
+  	minutes = 0;
+  }
+
+  if(minutes === 3 && game.currentScene.name == 'night'){
+  	scene.set(day);
+  	minutes = 0;
+  }
+
+  player.everyMinute();
+}, 60000);
+
+
+/* every second */
+
+var seconds = 0;
+tick.interval(function() {
+  console.log('seconds', seconds)
+  if (seconds == 60) seconds = 0;
+  else seconds++;
+
+  player.everySecond();
+}, 1000);
 
 
 /*
@@ -89,6 +129,26 @@ var player = new Player({
 
 player.addTo(game);
 
+player.everySecond = function(){
+	 if(game.currentScene.name == 'day'){
+
+  }
+
+  if(game.currentScene.name == 'night'){
+
+  }
+}
+
+player.everyMinute = function(){
+	if(game.currentScene.name == 'day'){
+
+  }
+
+  if(game.currentScene.name == 'night'){
+
+  }
+}
+
 
 /*
 *
@@ -105,4 +165,57 @@ var camera = new Camera({
   followPoint: { x: game.width / 2, y: game.height / 2 },
   viewport: { width: game.width, height: game.height },
   map: map
+});
+
+
+/* 
+* Scenes
+*/
+
+var scene = new SceneManager(game);
+
+
+/*
+* Day
+*/
+
+var day = scene.create({
+	name: 'day'
+});
+
+/* start with day scene */
+scene.set(day);
+
+day.on('start', function(){
+	console.log('day is starting');
+});
+
+day.on('update', function(interval){
+
+});
+
+day.on('draw', function(context){
+
+});
+
+
+/*
+* Night
+*/
+
+var night = scene.create({
+	name: 'night'
+});
+
+night.on('start', function(){
+	console.log('night is starting')
+});
+
+night.on('update', function(interval){
+
+});
+
+night.on('draw', function(c){
+  c.fillStyle = 'rgba(0, 0, 0, 0.3)';
+  c.fillRect(0, 0, game.width, game.height);
 });
