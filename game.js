@@ -233,6 +233,6 @@ night.on('draw-background', function(c){
 });
 
 night.on('draw-foreground', function(c){
-  c.fillStyle = 'rgba(0, 0, 0, 0.3)';
+  c.fillStyle = 'rgba(0, 0, 0, 0.5)';
   c.fillRect(0, 0, game.width, game.height);
 });
