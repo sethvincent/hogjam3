@@ -27,5 +27,5 @@ function Item(options){
 
 Item.prototype.eat = function(){
   this.healthMeter.level += this.healing;
-  if (this.healthMeter.level += 100) this.healthMeter.level = 100;
+  if (this.healthMeter.level >= 100) this.healthMeter.level = 100;
 }
