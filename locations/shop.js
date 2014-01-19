@@ -29,7 +29,7 @@ function Shop(options){
   this.on('draw', function(c){
     c.save();
     c.fillStyle = '#ffffff';
-    c.fillRect(this.position.x - this.camera.position.x, this.position.y - this.camera.position.y=, this.size.x, this.size.y);
+    c.fillRect(this.position.x - this.camera.position.x, this.position.y - this.camera.position.y, this.size.x, this.size.y);
     c.restore();
   });
 }
