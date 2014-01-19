@@ -14,7 +14,7 @@ function Player(options){
   this.keysDown = options.keysDown;
   this.camera = options.camera;
 
-  this.size = { x: 20, y: 20 };
+  this.size = { x: 40, y: 40 };
   this.velocity = { x: 0, y: 0 };
   this.position = options.position;
 

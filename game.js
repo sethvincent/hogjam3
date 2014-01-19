@@ -16,6 +16,8 @@ var SceneManager = require('crtrdg-scene');
 var Map = require('./map');
 var Camera = require('./camera');
 var Player = require('./player');
+var Item = require('./item');
+var Inventory = require('./inventory');
 
 /* locations */
 var Shop = require('./locations/shop');
@@ -34,7 +36,7 @@ var Meter = require('./meter');
 var game = new Game({
   canvas: 'game',
   width: window.innerWidth,
-  height: window.innerHeight,
+  height: window.innerHeight - 100,
   backgroundColor: randomRGBA(122, 256, 22, 256, 0, 256, 0.4)
 });
 
@@ -92,7 +94,6 @@ tick.interval(function() {
 /* every second */
 var seconds = 0;
 tick.interval(function() {
-  console.log('seconds', seconds)
 
   player.everySecond(seconds);
 
@@ -251,7 +252,6 @@ night.on('draw-foreground', function(c){
 });
 
 
-
 /*
 * Locations
 */
@@ -299,3 +299,39 @@ var moneyMeter = new Meter({
   position: { x: 10, y: 50 }
 });
 moneyMeter.addTo(game);
+
+
+/*
+*
+* INVENTORY & ITEMS
+*
+*/
+
+var inventory = new Inventory(game);
+
+var pizza = new Item({
+  name: 'pizza',
+  position: { x: 500, y: 140 },
+  size: { x: 20, y: 20 },
+  weight: 5
+});
+
+pizza.addTo(game);
+
+pizza.on('update', function(){
+	if (player.touches(pizza)){
+		console.log('ooooh, picked up pizza.');
+		pizza.remove();
+    inventory.add(pizza);
+	}
+});
+
+pizza.on('draw', function(c){
+	c.fillStyle = '#ff0000';
+	c.fillRect(
+		this.position.x - camera.position.x,
+		this.position.y - camera.position.y,
+		this.size.x,
+		this.size.y
+	);
+});
