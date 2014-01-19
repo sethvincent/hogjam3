@@ -96,10 +96,6 @@ tick.interval(function() {
 /* every second */
 var seconds = 0;
 tick.interval(function() {
-<<<<<<< HEAD
-=======
-	console.log('seconds', seconds);
->>>>>>> cleanup
   player.everySecond(seconds);
 
   if (seconds == 60) seconds = 0;
@@ -335,6 +331,9 @@ pizza.on('draw', function(c){
 */
 
 var wallet = new Wallet();
+
+
+map.load(game, camera, "locations.json");
 
 var assetLoader = new AssetLoader();
 var spriteSheet = assetLoader.load("assets/setPiecesTSR.PNG");
