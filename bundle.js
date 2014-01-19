@@ -1502,24 +1502,24 @@ moneyMeter.addTo(game);
 
 var inventory = new Inventory(game);
 
-var pizza = new Item({
-  name: 'pizza',
+var shelterFood = new Item({
+  name: 'Shelter Food',
   position: { x: 500, y: 140 },
   size: { x: 20, y: 20 },
-  weight: 5
+  weight: 2
 });
 
-pizza.addTo(game);
+shelterFood.addTo(game);
 
-pizza.on('update', function(){
-	if (player.touches(pizza)){
-		console.log('ooooh, picked up pizza.');
-		pizza.remove();
-    inventory.add(pizza);
+shelterFood.on('update', function(){
+	if (player.touches(shelterFood)){
+		console.log('hmm, guess this will do for now');
+		shelterFood.remove();
+    inventory.add(shelterFood);
 	}
 });
 
-pizza.on('draw', function(c){
+shelterFood.on('draw', function(c){
 	c.fillStyle = '#ff0000';
 	c.fillRect(
 		this.position.x - camera.position.x,
@@ -1530,13 +1530,69 @@ pizza.on('draw', function(c){
 });
 
 
+var basicFood = new Item({
+  name: 'Basic Food',
+  position: { x: 450, y: 140 },
+  size: { x: 20, y: 20 },
+  weight: 3
+});
+
+basicFood.addTo(game);
+
+basicFood.on('update', function(){
+  if (player.touches(basicFood)){
+    console.log('mmm mmmm good!');
+    basicFood.remove();
+    inventory.add(basicFood);
+  }
+});
+
+basicFood.on('draw', function(c){
+  c.fillStyle = '#0000ff';
+  c.fillRect(
+    this.position.x - camera.position.x,
+    this.position.y - camera.position.y,
+    this.size.x,
+    this.size.y
+  );
+});
+
+
+var goodFood = new Item({
+  name: 'Good Food',
+  position: { x: 550, y: 140 },
+  size: { x: 20, y: 20 },
+  weight: 3
+});
+
+goodFood.addTo(game);
+
+goodFood.on('update', function(){
+  if (player.touches(goodFood)){
+    console.log('Yummy Yummy Yummy I got food in my tummy!');
+    goodFood.remove();
+    inventory.add(goodFood);
+  }
+});
+
+goodFood.on('draw', function(c){
+  c.fillStyle = '#3d4f2a';
+  c.fillRect(
+    this.position.x - camera.position.x,
+    this.position.y - camera.position.y,
+    this.size.x,
+    this.size.y
+  );
+});
+
+
+
 /*
 * Wallet
 */
 
 var wallet = new Wallet();
 
-map.load(game, camera, "locations.json");
 var assetLoader = new AssetLoader();
 var spriteSheet = assetLoader.load("assets/setPiecesTSR.PNG");
 
@@ -1578,9 +1634,6 @@ map.locations.forEach(function(location, index, array) {
 
   location.menu = menu;
 });
-
-map.load(game, camera, "locations.json");
-
 },{"./asset_loader":4,"./camera":5,"./inventory":7,"./item":8,"./map":11,"./menu":12,"./meter":13,"./player":28,"./util/math":29,"./wallet":30,"crtrdg-gameloop":18,"crtrdg-keyboard":21,"crtrdg-mouse":24,"crtrdg-scene":25,"tic":27}],7:[function(require,module,exports){
 var inherits = require('inherits');
 
