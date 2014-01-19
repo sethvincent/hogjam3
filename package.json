@@ -18,7 +18,8 @@
     "tic": "~0.2.1",
     "crtrdg-scene": "0.0.2",
     "beefy": "~0.7.1",
-    "browserify": "~3.20.0"
+    "browserify": "~3.20.0",
+    "buzz": "jaysalvat/buzz"
   },
   "devDependencies": {}
 }
