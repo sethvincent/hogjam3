@@ -176,6 +176,21 @@ player.everyMinute = function(){
   }
 }
 
+game.on('lock_movement', function() {
+  player.can_move = false;
+  console.log("movement locked");
+});
+
+game.on('unlock_movement', function() {
+  player.can_move = true;
+  console.log("movement unlocked");
+});
+
+game.on('selected:work:work', function() {
+  console.log("selected:work:work");
+  player.goToWork();
+});
+
 
 /*
 *
@@ -407,6 +422,7 @@ goodFood.on('draw', function(c){
 */
 
 var wallet = new Wallet(game, { meter: moneyMeter });
+player.wallet = wallet;
 
 moneyMeter.addListener(wallet);
 
@@ -424,6 +440,7 @@ map.locations.forEach(function(location, index, array) {
             location.menu.open();
           } else {
             menus["closedMenu"].opened = true;
+            console.log(menus["closedMenu"]);
             menus["closedMenu"].open();
           }
         }
@@ -437,55 +454,57 @@ map.locations.forEach(function(location, index, array) {
 var menus = {
   closedMenu: new Menu({
     game: game,
+    name: "closed_menu",
     window: document.getElementById("dialog"),
-    message: "This location is closed right now.  Please come back later.",
-    close_timeout: 5
+    message: "This location is closed right now.  Please come back later."
   }),
   shop: new Menu({
     game: game,
+    name: "shop",
     window: document.getElementById("dialog"),
     message: "Welcome to the store, please have a look around and let me know what you would like to purchase",
-    close_timeout: 5,
-    choices: [
-      { "name": "choice1", "value": "choice 1" },
-      { "name": "choice2", "value": "choice 2" }
-    ]
+    choices: {
+      "choice1": { "name": "choice1", "value": "choice 1" },
+      "choice2": { "name": "choice2", "value": "choice 2" }
+    }
   }),
   shelter: new Menu({
     game: game,
+    name: "shelter",
     window: document.getElementById("dialog"),
     message: "Welcome to the shelter.",
-    close_timeout: 5,
-    choices: [
-      { "name": "choice1", "value": "choice 1" },
-      { "name": "choice2", "value": "choice 2" }
-    ]
+    choices: {
+      "choice1": { "name": "choice1", "value": "choice 1" },
+      "choice2": { "name": "choice2", "value": "choice 2" }
+    }
   }),
   food_bank: new Menu({
     game: game,
+    name: "food_bank",
     window: document.getElementById("dialog"),
     message: "Welcome to the Food bank",
-    close_timeout: 5,
-    choices: [
-      { "name": "choice1", "value": "choice 1" },
-      { "name": "choice2", "value": "choice 2" }
-    ]
+    choices: {
+      "choice1": { "name": "choice1", "value": "choice 1" },
+      "choice2": { "name": "choice2", "value": "choice 2" }
+    }
   }),
   office: new Menu({
     game: game,
+    name: "work",
     window: document.getElementById("dialog"),
-    message: "Welcome to the store, please have a look around and let me know what you would like to purchase",
-    close_timeout: 5,
-    choices: [
-      { "name": "choice1", "value": "choice 1" },
-      { "name": "choice2", "value": "choice 2" }
-    ]
+    message: "You have the option to work right now.",
+    choices: {
+      "work": { "name": "work",
+                "value": "Work for an hour"
+              },
+      "leave": { "name": "leave", "value": "Leave" }
+    }
   }),
   jail: new Menu({
     game: game,
+    name: "jail",
     window: document.getElementById("dialog"),
-    message: "Since you have behaved yourself in jail you are being released.",
-    close_timeout: 5
+    message: "Since you have behaved yourself in jail you are being released."
   })
 };
 
