@@ -73,7 +73,6 @@ function Menu(options){
     document.getElementById("timer").style.visibility = "hidden";
   }
 
-
   this.open = function(okCallback, cancelCallback) {
     var self = this;
     this.timer = 0;
@@ -143,4 +142,5 @@ function Menu(options){
       document.getElementById("timer").style.visibility = "hidden";
     }
   }
+
 }
