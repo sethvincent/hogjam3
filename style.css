@@ -114,6 +114,15 @@ button:hover {
   background-color: #434343;
 }
 
+input {
+  color: #fff;
+  cursor: pointer;
+}
+
+p {
+  color: #fff;
+}
+
 #game {
   position: absolute;
   z-index: 10
