@@ -6,10 +6,10 @@ play the game here: [sethvincent.github.io/hogjam3](http://sethvincent.github.io
 
 ## team:
 - alex
-- [david](https://github.com/cloud5six)
+- david
 - [jay](https://github.com/watchtheblur)
 - [josh](https://github.com/jgerrish)
 - [pat](https://github.com/ptressel)
-- pricilla
+- priscilla
 - [seth](https://github.com/sethvincent)
 - [sui](https://github.com/suisea)
