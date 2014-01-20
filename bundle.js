@@ -1250,7 +1250,7 @@ game.on('resume', function(){
 });
 
 game.on('update', function(interval){
-	tick.tick(interval);
+  tick.tick(interval);
 });
 
 game.on('draw', function(c){
@@ -1288,6 +1288,7 @@ minuteListeners = [];
 
 var minutes = 0;
 tick.interval(function() {
+  console.log("tick interval");
   if(minutes === 0) scene.set(day);
   if(minutes === 5) scene.set(night);
 
@@ -1296,7 +1297,9 @@ tick.interval(function() {
   if (minutes == 8) minutes = 0;
   else minutes++;
 
+  console.log("test");
   minuteListeners.forEach(function(listener, index, array) {
+    console.log("calling listener");
     listener.everyMinute(minutes);
   });
 }, 60000);
@@ -1314,6 +1317,7 @@ tick.interval(function() {
   });
 
 }, 1000);
+
 
 game.addIntervalEvent = function(listener) {
   intervalEvents.push(listener);
@@ -1614,7 +1618,9 @@ goodFood.on('draw', function(c){
 * Wallet
 */
 
-var wallet = new Wallet();
+var wallet = new Wallet(game, { meter: moneyMeter });
+
+moneyMeter.addListener(wallet);
 
 
 map.load(game, camera, "locations.json");
@@ -1626,9 +1632,13 @@ map.locations.forEach(function(location, index, array) {
       player.addBlocker(location);
       if (location.menu) {
         if (!location.menu.opened) {
-          location.menu.opened = true;
-          console.log("opening");
-          location.menu.open();
+          if (location.open) {
+            location.menu.opened = true;
+            location.menu.open();
+          } else {
+            menus["closedMenu"].opened = true;
+            menus["closedMenu"].open();
+          }
         }
       }
     } else {
@@ -1638,6 +1648,12 @@ map.locations.forEach(function(location, index, array) {
 });
 
 var menus = {
+  closedMenu: new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "This location is closed right now.  Please come back later.",
+    close_timeout: 5
+  }),
   shop: new Menu({
     game: game,
     window: document.getElementById("dialog"),
@@ -1682,16 +1698,17 @@ var menus = {
     game: game,
     window: document.getElementById("dialog"),
     message: "Since you have behaved yourself in jail you are being released.",
-    close_timeout: 5,
-    choices: [
-      { "name": "choice1", "value": "choice 1" },
-      { "name": "choice2", "value": "choice 2" }
-    ]
+    close_timeout: 5
   })
 };
 
 map.locations.forEach(function(location, index, array) {
   location.menu = menus[location.id];
+});
+
+// Game initialization, send out starting minute
+minuteListeners.forEach(function(listener, index, array) {
+  listener.everyMinute(0);
 });
 
 },{"./asset_loader":4,"./camera":5,"./inventory":7,"./item":8,"./map":11,"./menu":12,"./meter":13,"./player":29,"./util/math":30,"./wallet":31,"buzz":14,"crtrdg-gameloop":19,"crtrdg-keyboard":22,"crtrdg-mouse":25,"crtrdg-scene":26,"tic":28}],7:[function(require,module,exports){
@@ -1882,8 +1899,8 @@ module.exports=[
   },
   {
     "hours": {
-      "open": 3,
-      "close": 18
+      "open": 0,
+      "close": 24
     },
     "name": "Jail",
     "color": "black",
@@ -2140,7 +2157,7 @@ function Menu(options){
 
   this.window = options.window;
   this.message = options.message;
-  this.choices = options.choices;
+  this.choices = options.choices || [];
   this.game = options.game;
   this.close_timeout = options.close_timeout;
   this.opened = false;
@@ -2178,7 +2195,6 @@ Menu.prototype.open = function(okCallback, cancelCallback) {
   while (form.firstChild) {
     form.removeChild(form.firstChild);
   }
-
   this.choices.forEach(function(choice, index, array) {
     var p = document.createElement('p');
     var e = document.createElement('input');
@@ -2230,7 +2246,9 @@ function Meter(options) {
   var self = this;
 
   this.level = 100;
+  this.rate = 1;
   this.size = { y: 11 };
+  this.listeners = [];
 
   if (options.hasOwnProperty("name")) {
     this.name = options.name;
@@ -2251,7 +2269,11 @@ function Meter(options) {
   this.everySecond = function() {
     if (this.level > 0) {
       this.level -= 1;
+      this.listeners.forEach(function(listener, index, array) {
+        listener.changeEvent("remove", 1);
+      });
     }
+
     //console.log(this.name + " meter level: "+ this.level);
   };
 
@@ -2259,12 +2281,10 @@ function Meter(options) {
     c.save();
 
     var label = this.name;
-    var x_pos = this.position.x - this.camera.position.x;
-    var y_pos = this.position.y - this.camera.position.y;
 
     c.fillStyle = "white";
     c.font = "12px Arial";
-    c.fillText(label, x_pos - 5, y_pos + 9);
+    c.fillText(label, self.position.x - 5, self.position.y + 9);
 
     c.beginPath();
     c.lineWidth = 2;
@@ -2272,16 +2292,16 @@ function Meter(options) {
 
     c.fillStyle = self.color;
     c.rect(
-      self.position.x - self.camera.position.x + 45,
-      self.position.y - self.camera.position.y,
+      self.position.x + 45,// - self.camera.position.x + 45,
+      self.position.y,// - self.camera.position.y,
       102,
       self.size.y + 2
     );
     c.stroke();
 
     c.fillRect(
-      self.position.x - self.camera.position.x + 46,
-      self.position.y - self.camera.position.y + 1,
+      self.position.x + 46, // - self.camera.position.x + 46,
+      self.position.y + 1, // - self.camera.position.y + 1,
       self.level,
       self.size.y
     );
@@ -2307,6 +2327,13 @@ Meter.prototype.remove = function(value) {
     new_level = 0;
   }
   this.level = new_level;
+  this.listeners.forEach(function(listener, index, array) {
+    listener("remove", value);
+  });
+}
+
+Meter.prototype.addListener = function(listener) {
+  this.listeners.push(listener);
 }
 
 },{"crtrdg-entity":15,"inherits":27}],14:[function(require,module,exports){
@@ -7030,10 +7057,11 @@ var inherits = require('inherits');
 
 module.exports = Wallet;
 
-function Wallet(game){
+function Wallet(game, options) {
   this.game = game;
-  this.cash = 0;
+  this.cash = 100;
   this.createHTML();
+  this.meter = options.meter
 }
 
 Wallet.prototype.createHTML = function(){
@@ -7045,15 +7073,29 @@ Wallet.prototype.createHTML = function(){
 };
 
 Wallet.prototype.add = function(amount){
-	this.cash += amount;
-	this.el.innerHTML = '$' + this.cash;
+  this.cash += amount;
+  this.draw();
+  this.meter.add(amount);
 }
 
 Wallet.prototype.remove = function(amount){
-	this.cash -= amount;
-	this.el.innerHTML = '$' + this.cash;
+  this.cash -= amount;
+  this.draw();
+  this.meter.remove(amount);
 }
 
+Wallet.prototype.changeEvent = function(type, amount) {
+  if (type == "remove") {
+    this.cash -= amount;
+  } else if (type == "add") {
+    this.cash += amount;
+  }
+  this.draw();
+}
+
+Wallet.prototype.draw = function() {
+  this.el.innerHTML = '$' + this.cash;
+}
 
 },{"inherits":27}]},{},[6])
 ;
