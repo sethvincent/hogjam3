@@ -77,10 +77,10 @@ game.on('lose', function(){
     window: document.getElementById("dialog"),
     message: "You lost. Play again?",
     close_timeout: 5,
-    choices: [
-      { "name": "yes", "value": "Yes" },
-      { "name": "no", "value": "No" }
-    ]
+    choices: {
+      "yes": { "name": "yes", "value": "Yes" },
+      "no": { "name": "no", "value": "No" }
+    }
   });
   loseMenu.opened = true;
   loseMenu.open();
@@ -393,9 +393,9 @@ shelterFood.on('update', function(){
 	if (player.touches(shelterFood)){
 		console.log('hmm, guess this will do for now');
 		shelterFood.remove();
-          inventory.add(shelterFood);
-          energyMeter.add(10);
-          healthMeter.add(5);
+    inventory.add(shelterFood);
+    energyMeter.add(10);
+    healthMeter.add(5);
 	}
 });
 

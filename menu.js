@@ -38,8 +38,6 @@ function Menu(options){
     }
   });
 
-  this.outerWrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-
   var elements = self.window.getElementsByClassName("message");
 
   if (elements.length == 1) {
@@ -49,98 +47,97 @@ function Menu(options){
 
   if (this.opened) {
     self.window.style.visibility = "hidden";
-    this.outerWrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.0)';
     this.opened = false;
   }
+}
 
-  this.close = function() {
-    var self = this;
+Menu.prototype.open = function(okCallback, cancelCallback) {
+  var self = this;
+  this.timer = 0;
+  this.cancelCallback = cancelCallback;
+  this.okCallback = okCallback;
+  this.choice = null;
 
-    if (this.opened) {
-      self.window.style.visibility = "hidden";
+  this.outerWrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
 
-      this.opened = false;
-    }
-    if (this.modal) {
-      this.game.emit('unlock_movement');
-    }
+  var elements = self.window.getElementsByClassName("message");
+  if (elements.length == 1) {
+    elements[0].innerHTML = this.message;
+  }
+  var form = document.getElementById("choice-form");
 
-    if (self.choice) {
-      var choice = this.choices[self.choice];
-      this.game.emit("selected:" + this.name + ":" + self.choice);
-    }
-    document.getElementById("dialog-buttons").style.visibility = "hidden";
+  while (form.firstChild) {
+    form.removeChild(form.firstChild);
+  }
+  for (var c in this.choices) {
+    var choice = this.choices[c];
+    var p = document.createElement('p');
+    var e = document.createElement('input');
+    e.setAttribute('type', 'radio');
+    e.setAttribute('name', 'choice');
+    e.setAttribute('value', choice.name);
+
+    e.addEventListener('change', function(event) {
+      self.choice = event.target.value;
+      console.log("change event: " + self.choice);
+    });
+
+    e.innerHTML = choice.value;
+    var t = document.createTextNode(choice.value);
+    p.appendChild(e);
+    p.appendChild(t);
+    form.appendChild(p);
+  };
+
+  /* We need to have the timer thread / window open the dialog
+     so that it can be closed by the close timer */
+  var openTimeout = this.game.addTimeout(function() {
+    self.window.style.visibility = "visible";
+  }, 1);
+
+  if (this.hasOwnProperty("close_timeout") && (this.close_timeout > 0)) {
+    var timerInterval = window.setInterval(function(e) {
+      self.timer += 1;
+      if (self.timer_message) {
+        var str = self.timer_message(self);
+        document.getElementById("timer").style.visibility = "visible";
+        document.getElementById("timer").innerHTML = str;
+      }
+    }, 1000);
+
+    var closeTimeout = this.game.addTimeout(function(e) {
+      self.close();
+      clearInterval(timerInterval);
+    }, 1000 * this.close_timeout);
+  } else {
     document.getElementById("timer").style.visibility = "hidden";
   }
 
-  this.open = function(okCallback, cancelCallback) {
-    var self = this;
-    this.timer = 0;
-    this.cancelCallback = cancelCallback;
-    this.okCallback = okCallback;
-    this.choice = null;
+  if (this.modal) {
+    this.game.emit('lock_movement');
+    document.getElementById("dialog-buttons").style.visibility = "hidden";
+    document.getElementById("timer").style.visibility = "hidden";
+  } else {
+    document.getElementById("dialog-buttons").style.visibility = "visible";
+    document.getElementById("timer").style.visibility = "hidden";
+  }
+}
 
-    var elements = self.window.getElementsByClassName("message");
-    if (elements.length == 1) {
-      elements[0].innerHTML = this.message;
-    }
-    var form = document.getElementById("choice-form");
+Menu.prototype.close = function() {
+  this.outerWrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.0)';
 
-    while (form.firstChild) {
-      form.removeChild(form.firstChild);
-    }
-    for (var c in this.choices) {
-      var choice = this.choices[c];
-      var p = document.createElement('p');
-      var e = document.createElement('input');
-      e.setAttribute('type', 'radio');
-      e.setAttribute('name', 'choice');
-      e.setAttribute('value', choice.name);
+  if (this.opened) {
+    this.window.style.visibility = "hidden";
 
-      e.addEventListener('change', function(event) {
-        self.choice = event.target.value;
-        console.log("change event: " + self.choice);
-      });
-
-      e.innerHTML = choice.value;
-      var t = document.createTextNode(choice.value);
-      p.appendChild(e);
-      p.appendChild(t);
-      form.appendChild(p);
-    };
-
-    /* We need to have the timer thread / window open the dialog
-       so that it can be closed by the close timer */
-    var openTimeout = this.game.addTimeout(function() {
-      self.window.style.visibility = "visible";
-    }, 1);
-
-    if (this.hasOwnProperty("close_timeout") && (this.close_timeout > 0)) {
-      var timerInterval = window.setInterval(function(e) {
-        self.timer += 1;
-        if (self.timer_message) {
-          var str = self.timer_message(self);
-          document.getElementById("timer").style.visibility = "visible";
-          document.getElementById("timer").innerHTML = str;
-        }
-      }, 1000);
-
-      var closeTimeout = this.game.addTimeout(function(e) {
-        self.close();
-        clearInterval(timerInterval);
-      }, 1000 * this.close_timeout);
-    } else {
-      document.getElementById("timer").style.visibility = "hidden";
-    }
-
-    if (this.modal) {
-      this.game.emit('lock_movement');
-      document.getElementById("dialog-buttons").style.visibility = "hidden";
-      document.getElementById("timer").style.visibility = "hidden";
-    } else {
-      document.getElementById("dialog-buttons").style.visibility = "visible";
-      document.getElementById("timer").style.visibility = "hidden";
-    }
+    this.opened = false;
+  }
+  if (this.modal) {
+    this.game.emit('unlock_movement');
   }
 
+  if (this.choice) this.game.emit("selected:" + this.name + ":" + this.choice);
+  this.choice = null;
+
+  document.getElementById("dialog-buttons").style.visibility = "hidden";
+  document.getElementById("timer").style.visibility = "hidden";
 }

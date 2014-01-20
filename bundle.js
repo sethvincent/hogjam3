@@ -1277,10 +1277,10 @@ game.on('lose', function(){
     window: document.getElementById("dialog"),
     message: "You lost. Play again?",
     close_timeout: 5,
-    choices: [
-      { "name": "yes", "value": "Yes" },
-      { "name": "no", "value": "No" }
-    ]
+    choices: {
+      "yes": { "name": "yes", "value": "Yes" },
+      "no": { "name": "no", "value": "No" }
+    }
   });
   loseMenu.opened = true;
   loseMenu.open();
@@ -1423,6 +1423,21 @@ player.everyMinute = function(){
 
   }
 }
+
+game.on('lock_movement', function() {
+  player.can_move = false;
+  console.log("movement locked");
+});
+
+game.on('unlock_movement', function() {
+  player.can_move = true;
+  console.log("movement unlocked");
+});
+
+game.on('selected:work:work', function() {
+  console.log("selected:work:work");
+  player.goToWork();
+});
 
 
 /*
@@ -1578,9 +1593,9 @@ shelterFood.on('update', function(){
 	if (player.touches(shelterFood)){
 		console.log('hmm, guess this will do for now');
 		shelterFood.remove();
-          inventory.add(shelterFood);
-          energyMeter.add(10);
-          healthMeter.add(5);
+    inventory.add(shelterFood);
+    energyMeter.add(10);
+    healthMeter.add(5);
 	}
 });
 
@@ -1667,6 +1682,7 @@ goodFood.on('draw', function(c){
 */
 
 var wallet = new Wallet(game, { meter: moneyMeter });
+player.wallet = wallet;
 
 moneyMeter.addListener(wallet);
 
@@ -1685,6 +1701,7 @@ map.locations.forEach(function(location, index, array) {
             location.menu.open();
           } else {
             menus["closedMenu"].opened = true;
+            console.log(menus["closedMenu"]);
             menus["closedMenu"].open();
           }
         }
@@ -1698,55 +1715,57 @@ map.locations.forEach(function(location, index, array) {
 var menus = {
   closedMenu: new Menu({
     game: game,
+    name: "closed_menu",
     window: document.getElementById("dialog"),
-    message: "This location is closed right now.  Please come back later.",
-    close_timeout: 5
+    message: "This location is closed right now.  Please come back later."
   }),
   shop: new Menu({
     game: game,
+    name: "shop",
     window: document.getElementById("dialog"),
     message: "Welcome to the store, please have a look around and let me know what you would like to purchase",
-    close_timeout: 5,
-    choices: [
-      { "name": "choice1", "value": "choice 1" },
-      { "name": "choice2", "value": "choice 2" }
-    ]
+    choices: {
+      "choice1": { "name": "choice1", "value": "choice 1" },
+      "choice2": { "name": "choice2", "value": "choice 2" }
+    }
   }),
   shelter: new Menu({
     game: game,
+    name: "shelter",
     window: document.getElementById("dialog"),
     message: "Welcome to the shelter.",
-    close_timeout: 5,
-    choices: [
-      { "name": "choice1", "value": "choice 1" },
-      { "name": "choice2", "value": "choice 2" }
-    ]
+    choices: {
+      "choice1": { "name": "choice1", "value": "choice 1" },
+      "choice2": { "name": "choice2", "value": "choice 2" }
+    }
   }),
   food_bank: new Menu({
     game: game,
+    name: "food_bank",
     window: document.getElementById("dialog"),
     message: "Welcome to the Food bank",
-    close_timeout: 5,
-    choices: [
-      { "name": "choice1", "value": "choice 1" },
-      { "name": "choice2", "value": "choice 2" }
-    ]
+    choices: {
+      "choice1": { "name": "choice1", "value": "choice 1" },
+      "choice2": { "name": "choice2", "value": "choice 2" }
+    }
   }),
   office: new Menu({
     game: game,
+    name: "work",
     window: document.getElementById("dialog"),
-    message: "Welcome to the store, please have a look around and let me know what you would like to purchase",
-    close_timeout: 5,
-    choices: [
-      { "name": "choice1", "value": "choice 1" },
-      { "name": "choice2", "value": "choice 2" }
-    ]
+    message: "You have the option to work right now.",
+    choices: {
+      "work": { "name": "work",
+                "value": "Work for an hour"
+              },
+      "leave": { "name": "leave", "value": "Leave" }
+    }
   }),
   jail: new Menu({
     game: game,
+    name: "jail",
     window: document.getElementById("dialog"),
-    message: "Since you have behaved yourself in jail you are being released.",
-    close_timeout: 5
+    message: "Since you have behaved yourself in jail you are being released."
   })
 };
 
@@ -1931,8 +1950,8 @@ module.exports=[
   },
   {
     "hours": {
-      "open": 3,
-      "close": 18
+      "open": 0,
+      "close": 24
     },
     "name": "Office",
     "color": "black",
@@ -2207,10 +2226,17 @@ function Menu(options){
   this.message = options.message;
   this.choices = options.choices || [];
   this.game = options.game;
-  this.close_timeout = options.close_timeout;
+  if (options.hasOwnProperty("close_timeout")) {
+    this.close_timeout = options.close_timeout;
+  }
+  if (options.hasOwnProperty("timer_message")) {
+    this.timer_message = options.timer_message;
+  }
   this.opened = false;
   this.outerWrapper = document.getElementById('outer-dialog-wrapper');
 
+  this.modal = options.modal || false;
+  this.name = options.name;
   var okButton = document.getElementById("dialog-ok-button");
   var cancelButton = document.getElementById("dialog-cancel-button");
 
@@ -2227,15 +2253,6 @@ function Menu(options){
       cancelCallback(self.choice);
     }
   });
-}
-
-Menu.prototype.open = function(okCallback, cancelCallback) {
-  var self = this;
-
-  this.cancelCallback = cancelCallback;
-  this.okCallback = okCallback;
-
-  this.outerWrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
 
   var elements = self.window.getElementsByClassName("message");
 
@@ -2244,10 +2261,32 @@ Menu.prototype.open = function(okCallback, cancelCallback) {
   }
   var form = document.getElementById("choice-form");
 
+  if (this.opened) {
+    self.window.style.visibility = "hidden";
+    this.opened = false;
+  }
+}
+
+Menu.prototype.open = function(okCallback, cancelCallback) {
+  var self = this;
+  this.timer = 0;
+  this.cancelCallback = cancelCallback;
+  this.okCallback = okCallback;
+  this.choice = null;
+
+  this.outerWrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+
+  var elements = self.window.getElementsByClassName("message");
+  if (elements.length == 1) {
+    elements[0].innerHTML = this.message;
+  }
+  var form = document.getElementById("choice-form");
+
   while (form.firstChild) {
     form.removeChild(form.firstChild);
   }
-  this.choices.forEach(function(choice, index, array) {
+  for (var c in this.choices) {
+    var choice = this.choices[c];
     var p = document.createElement('p');
     var e = document.createElement('input');
     e.setAttribute('type', 'radio');
@@ -2255,7 +2294,8 @@ Menu.prototype.open = function(okCallback, cancelCallback) {
     e.setAttribute('value', choice.name);
 
     e.addEventListener('change', function(event) {
-      self.choice = e.getAttribute('value');
+      self.choice = event.target.value;
+      console.log("change event: " + self.choice);
     });
 
     e.innerHTML = choice.value;
@@ -2263,7 +2303,7 @@ Menu.prototype.open = function(okCallback, cancelCallback) {
     p.appendChild(e);
     p.appendChild(t);
     form.appendChild(p);
-  });
+  };
 
   /* We need to have the timer thread / window open the dialog
      so that it can be closed by the close timer */
@@ -2271,21 +2311,52 @@ Menu.prototype.open = function(okCallback, cancelCallback) {
     self.window.style.visibility = "visible";
   }, 1);
 
-  var closeTimeout = this.game.addTimeout(function() {
-    self.close();
-  }, 1000 * this.close_timeout);
-}
+  if (this.hasOwnProperty("close_timeout") && (this.close_timeout > 0)) {
+    var timerInterval = window.setInterval(function(e) {
+      self.timer += 1;
+      if (self.timer_message) {
+        var str = self.timer_message(self);
+        document.getElementById("timer").style.visibility = "visible";
+        document.getElementById("timer").innerHTML = str;
+      }
+    }, 1000);
 
-Menu.prototype.close = function() {
-  var self = this;
+    var closeTimeout = this.game.addTimeout(function(e) {
+      self.close();
+      clearInterval(timerInterval);
+    }, 1000 * this.close_timeout);
+  } else {
+    document.getElementById("timer").style.visibility = "hidden";
+  }
 
-  if (this.opened) {
-    self.window.style.visibility = "hidden";
-    this.outerWrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.0)';
-    this.opened = false;
+  if (this.modal) {
+    this.game.emit('lock_movement');
+    document.getElementById("dialog-buttons").style.visibility = "hidden";
+    document.getElementById("timer").style.visibility = "hidden";
+  } else {
+    document.getElementById("dialog-buttons").style.visibility = "visible";
+    document.getElementById("timer").style.visibility = "hidden";
   }
 }
 
+Menu.prototype.close = function() {
+  this.outerWrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.0)';
+
+  if (this.opened) {
+    this.window.style.visibility = "hidden";
+
+    this.opened = false;
+  }
+  if (this.modal) {
+    this.game.emit('unlock_movement');
+  }
+
+  if (this.choice) this.game.emit("selected:" + this.name + ":" + this.choice);
+  this.choice = null;
+
+  document.getElementById("dialog-buttons").style.visibility = "hidden";
+  document.getElementById("timer").style.visibility = "hidden";
+}
 },{"tic":28}],13:[function(require,module,exports){
 var inherits = require('inherits');
 var Entity = require('crtrdg-entity');
@@ -6881,6 +6952,7 @@ var randomInt = require('./util/math').randomInt;
 var randomRGB = require('./util/math').randomRGB;
 var randomRGBA = require('./util/math').randomRGBA;
 var AssetLoader = require('./asset_loader');
+var Menu = require('./menu');
 
 module.exports = Player;
 
@@ -6905,6 +6977,7 @@ function Player(options){
   this.points = 00;
   this.blockers = {};
   this.step = 0;
+  this.can_move = true;
 
   this.particles = {
     jump: {
@@ -7043,32 +7116,54 @@ Player.prototype.boundaries = function(){
 };
 
 Player.prototype.input = function(){
-  if ('W' in this.keysDown){
-    this.velocity.y -= this.speed;
-    this.direction = "up";
-    this.step += 1;
-  }
+  if (this.can_move) {
+    if ('W' in this.keysDown){
+      this.velocity.y -= this.speed;
+      this.direction = "up";
+      this.step += 1;
+    }
 
-  if ('S' in this.keysDown){
-    this.velocity.y += this.speed;
-    this.direction = "down";
-    this.step += 1;
-  }
+    if ('S' in this.keysDown){
+      this.velocity.y += this.speed;
+      this.direction = "down";
+      this.step += 1;
+    }
 
-  if ('A' in this.keysDown){
-    this.velocity.x -= this.speed;
-    this.direction = "left";
-    this.step += 1;
-  }
+    if ('A' in this.keysDown){
+      this.velocity.x -= this.speed;
+      this.direction = "left";
+      this.step += 1;
+    }
 
-  if ('D' in this.keysDown){
-    this.velocity.x += this.speed;
-    this.direction = "right";
-    this.step += 1;
+    if ('D' in this.keysDown){
+      this.velocity.x += this.speed;
+      this.direction = "right";
+      this.step += 1;
+    }
   }
 };
 
-},{"./asset_loader":4,"./util/math":30,"crtrdg-entity":15,"inherits":27}],30:[function(require,module,exports){
+Player.prototype.workingMessageFunc = function(menu) {
+  var str = "<p>Money earned: " + menu.timer.toString() + "</p><p>Time remaining: " + (menu.close_timeout - menu.timer).toString() + "</p>";
+  return str;
+};
+
+Player.prototype.goToWork = function() {
+  var menu = new Menu({
+    game: this.game,
+    name: "working",
+    window: document.getElementById("dialog"),
+    message: "You are at work.",
+    close_timeout: 5,
+    modal: true,
+    timer_message: this.workingMessageFunc
+  });
+  menu.opened = true;
+  menu.open();
+  this.wallet.add(5);
+}
+
+},{"./asset_loader":4,"./menu":12,"./util/math":30,"crtrdg-entity":15,"inherits":27}],30:[function(require,module,exports){
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
