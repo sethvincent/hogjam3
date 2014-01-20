@@ -1299,7 +1299,7 @@ tick.interval(function() {
   minuteListeners.forEach(function(listener, index, array) {
     listener.everyMinute(minutes);
   });
-}, 1000);
+}, 60000);
 
 /* every second */
 var seconds = 0;
