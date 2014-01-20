@@ -9,6 +9,7 @@ function Meter(options) {
   var self = this;
 
   this.level = 100;
+  this.rate = 1;
   this.size = { y: 11 };
   this.listeners = [];
 
