@@ -84,16 +84,34 @@ a:focus {
   width: 80%;
   height: 80%;
   /* height: 400px; */
-  background-color: #A78B72;
+  background-color: #333;
   z-index: 100;
   /* margin: 0 auto 0 auto; */
   margin: 0 auto;
+  font-weight: 300;
+  padding: 30px 100px;
 }
 
 .message {
   padding: 20px;
   font-size: 30px;
   color: white;
+}
+
+button {
+  border: 1px solid #efefec;
+  background-color: #343434;
+  color: #efefec;
+  border-radius: 2px;
+  font-weight: 100;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+button:hover {
+  color: #fff;
+  border-color: #fff;
+  background-color: #434343;
 }
 
 #game {

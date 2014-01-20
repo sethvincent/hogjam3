@@ -12,6 +12,7 @@ function Menu(options){
   this.game = options.game;
   this.close_timeout = options.close_timeout;
   this.opened = false;
+  this.outerWrapper = document.getElementById('outer-dialog-wrapper');
 
   var okButton = document.getElementById("dialog-ok-button");
   var cancelButton = document.getElementById("dialog-cancel-button");
@@ -37,8 +38,10 @@ Menu.prototype.open = function(okCallback, cancelCallback) {
   this.cancelCallback = cancelCallback;
   this.okCallback = okCallback;
 
+  this.outerWrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+
   var elements = self.window.getElementsByClassName("message");
-  console.log(self.window, elements)
+
   if (elements.length == 1) {
     elements[0].innerHTML = this.message;
   }
@@ -81,7 +84,7 @@ Menu.prototype.close = function() {
 
   if (this.opened) {
     self.window.style.visibility = "hidden";
-
+    this.outerWrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.0)';
     this.opened = false;
   }
 }
