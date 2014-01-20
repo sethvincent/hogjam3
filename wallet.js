@@ -2,10 +2,11 @@ var inherits = require('inherits');
 
 module.exports = Wallet;
 
-function Wallet(game){
+function Wallet(game, options) {
   this.game = game;
-  this.cash = 0;
+  this.cash = 100;
   this.createHTML();
+  this.meter = options.meter
 }
 
 Wallet.prototype.createHTML = function(){
@@ -17,12 +18,26 @@ Wallet.prototype.createHTML = function(){
 };
 
 Wallet.prototype.add = function(amount){
-	this.cash += amount;
-	this.el.innerHTML = '$' + this.cash;
+  this.cash += amount;
+  this.draw();
+  this.meter.add(amount);
 }
 
 Wallet.prototype.remove = function(amount){
-	this.cash -= amount;
-	this.el.innerHTML = '$' + this.cash;
+  this.cash -= amount;
+  this.draw();
+  this.meter.remove(amount);
 }
 
+Wallet.prototype.changeEvent = function(type, amount) {
+  if (type == "remove") {
+    this.cash -= amount;
+  } else if (type == "add") {
+    this.cash += amount;
+  }
+  this.draw();
+}
+
+Wallet.prototype.draw = function() {
+  this.el.innerHTML = '$' + this.cash;
+}

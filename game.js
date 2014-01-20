@@ -402,7 +402,9 @@ goodFood.on('draw', function(c){
 * Wallet
 */
 
-var wallet = new Wallet();
+var wallet = new Wallet(game, { meter: moneyMeter });
+
+moneyMeter.addListener(wallet);
 
 map.load(game, camera, "locations.json");
 

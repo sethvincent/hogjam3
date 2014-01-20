@@ -10,6 +10,7 @@ function Meter(options) {
 
   this.level = 100;
   this.size = { y: 11 };
+  this.listeners = [];
 
   if (options.hasOwnProperty("name")) {
     this.name = options.name;
@@ -30,7 +31,11 @@ function Meter(options) {
   this.everySecond = function() {
     if (this.level > 0) {
       this.level -= 1;
+      this.listeners.forEach(function(listener, index, array) {
+        listener.changeEvent("remove", 1);
+      });
     }
+
     //console.log(this.name + " meter level: "+ this.level);
   };
 
@@ -38,12 +43,10 @@ function Meter(options) {
     c.save();
 
     var label = this.name;
-    var x_pos = this.position.x - this.camera.position.x;
-    var y_pos = this.position.y - this.camera.position.y;
 
     c.fillStyle = "white";
     c.font = "12px Arial";
-    c.fillText(label, x_pos - 5, y_pos + 9);
+    c.fillText(label, self.position.x - 5, self.position.y + 9);
 
     c.beginPath();
     c.lineWidth = 2;
@@ -51,16 +54,16 @@ function Meter(options) {
 
     c.fillStyle = self.color;
     c.rect(
-      self.position.x - self.camera.position.x + 45,
-      self.position.y - self.camera.position.y,
+      self.position.x + 45,// - self.camera.position.x + 45,
+      self.position.y,// - self.camera.position.y,
       102,
       self.size.y + 2
     );
     c.stroke();
 
     c.fillRect(
-      self.position.x - self.camera.position.x + 46,
-      self.position.y - self.camera.position.y + 1,
+      self.position.x + 46, // - self.camera.position.x + 46,
+      self.position.y + 1, // - self.camera.position.y + 1,
       self.level,
       self.size.y
     );
@@ -86,4 +89,11 @@ Meter.prototype.remove = function(value) {
     new_level = 0;
   }
   this.level = new_level;
+  this.listeners.forEach(function(listener, index, array) {
+    listener("remove", value);
+  });
+}
+
+Meter.prototype.addListener = function(listener) {
+  this.listeners.push(listener);
 }
