@@ -86,7 +86,6 @@ game.on('lose', function(){
   loseMenu.open();
 });
 
-
 /*
 * Sounds
 */
@@ -364,6 +363,7 @@ var moneyMeter = new Meter({
   camera: camera,
   name: "money",
   color: "green",
+  rate: 2,
   position: { x: 10, y: 50 }
 });
 moneyMeter.addTo(game);
@@ -476,6 +476,14 @@ goodFood.on('draw', function(c){
   );
 });
 
+var workShirt = new Item({
+  name: 'Work Clothes',
+  inventory: inventory,
+  position: { x: 500, y: 140 },
+  size: { x: 20, y: 20 },
+  weight: 2,
+  healing: 0
+});
 
 /*
 * Wallet
@@ -485,7 +493,6 @@ var wallet = new Wallet(game, { meter: moneyMeter });
 player.wallet = wallet;
 
 moneyMeter.addListener(wallet);
-
 
 map.load(game, camera, "locations.json");
 
@@ -511,6 +518,8 @@ map.locations.forEach(function(location, index, array) {
     }
   });
 });
+
+
 
 var menus = {
   closedMenu: new Menu({
@@ -561,11 +570,17 @@ var menus = {
       "leave": { "name": "leave", "value": "Leave" }
     }
   }),
+  officeNeedClothes: new Menu({
+    game: game,
+    name: "work",
+    window: document.getElementById("dialog"),
+    message: "You need work clothes before you can get a job."
+  }),
   jail: new Menu({
     game: game,
     name: "jail",
     window: document.getElementById("dialog"),
-    message: "Since you have behaved yourself in jail you are being released."
+    message: "You have recently gotten out of jail and are now trying to put your life back together."
   })
 };
 
