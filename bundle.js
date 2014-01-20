@@ -1251,6 +1251,9 @@ game.on('resume', function(){
 
 game.on('update', function(interval){
   tick.tick(interval);
+  if (moneyMeter.level == 0 || healthMeter == 0 || energyMeter == 0){
+    game.emit('lose');
+  }
 });
 
 game.on('draw', function(c){
@@ -1420,14 +1423,6 @@ player.everyMinute = function(){
 
   }
 }
-
-player.on('update', function(){
-  console.log('health', player.health, 'wallet', wallet.cash)
-  if (wallet.cash == 0){
-    console.log('limit reached');
-    game.emit('lose');
-  }
-})
 
 
 /*
