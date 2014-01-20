@@ -73,10 +73,8 @@ game.on('draw-foreground', function(context){
 * Sounds
 */
 
-var soundOne = new buzz.sound('./sounds/01.mp3');
-
-soundOne.play().loop();
-
+var daySound = new buzz.sound('./sounds/day.mp3');
+var nightSound = new buzz.sound('./sounds/night.mp3');
 
 /*
 * Counter stuff
@@ -216,11 +214,10 @@ var day = scene.create({
 	name: 'day'
 });
 
-/* start with day scene */
-scene.set(day);
-
 day.on('start', function(){
 	console.log('day is starting');
+  daySound.play().loop();
+  nightSound.stop();
 });
 
 day.on('update', function(interval){
@@ -240,6 +237,9 @@ day.on('draw-foreground', function(c){
   c.fillRect(0, 0, game.width, game.height);
 });
 
+/* start with day scene */
+scene.set(day);
+
 
 /*
 * Night
@@ -251,6 +251,8 @@ var night = scene.create({
 
 night.on('start', function(){
 	console.log('night is starting')
+  nightSound.play().loop();
+  daySound.stop();
 });
 
 night.on('update', function(interval){
