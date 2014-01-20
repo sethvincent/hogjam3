@@ -8,7 +8,7 @@ function Menu(options){
 
   this.window = options.window;
   this.message = options.message;
-  this.choices = options.choices;
+  this.choices = options.choices || [];
   this.game = options.game;
   this.close_timeout = options.close_timeout;
   this.opened = false;
@@ -46,7 +46,6 @@ Menu.prototype.open = function(okCallback, cancelCallback) {
   while (form.firstChild) {
     form.removeChild(form.firstChild);
   }
-
   this.choices.forEach(function(choice, index, array) {
     var p = document.createElement('p');
     var e = document.createElement('input');

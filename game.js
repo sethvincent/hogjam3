@@ -50,7 +50,7 @@ game.on('resume', function(){
 });
 
 game.on('update', function(interval){
-	tick.tick(interval);
+  tick.tick(interval);
 });
 
 game.on('draw', function(c){
@@ -88,6 +88,7 @@ minuteListeners = [];
 
 var minutes = 0;
 tick.interval(function() {
+  console.log("tick interval");
   if(minutes === 0) scene.set(day);
   if(minutes === 5) scene.set(night);
 
@@ -96,7 +97,9 @@ tick.interval(function() {
   if (minutes == 8) minutes = 0;
   else minutes++;
 
+  console.log("test");
   minuteListeners.forEach(function(listener, index, array) {
+    console.log("calling listener");
     listener.everyMinute(minutes);
   });
 }, 60000);
@@ -114,6 +117,7 @@ tick.interval(function() {
   });
 
 }, 1000);
+
 
 game.addIntervalEvent = function(listener) {
   intervalEvents.push(listener);
@@ -414,7 +418,9 @@ goodFood.on('draw', function(c){
 * Wallet
 */
 
-var wallet = new Wallet();
+var wallet = new Wallet(game, { meter: moneyMeter });
+
+moneyMeter.addListener(wallet);
 
 
 map.load(game, camera, "locations.json");
@@ -426,9 +432,13 @@ map.locations.forEach(function(location, index, array) {
       player.addBlocker(location);
       if (location.menu) {
         if (!location.menu.opened) {
-          location.menu.opened = true;
-          console.log("opening");
-          location.menu.open();
+          if (location.open) {
+            location.menu.opened = true;
+            location.menu.open();
+          } else {
+            menus["closedMenu"].opened = true;
+            menus["closedMenu"].open();
+          }
         }
       }
     } else {
@@ -438,6 +448,12 @@ map.locations.forEach(function(location, index, array) {
 });
 
 var menus = {
+  closedMenu: new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "This location is closed right now.  Please come back later.",
+    close_timeout: 5
+  }),
   shop: new Menu({
     game: game,
     window: document.getElementById("dialog"),
@@ -482,14 +498,15 @@ var menus = {
     game: game,
     window: document.getElementById("dialog"),
     message: "Since you have behaved yourself in jail you are being released.",
-    close_timeout: 5,
-    choices: [
-      { "name": "choice1", "value": "choice 1" },
-      { "name": "choice2", "value": "choice 2" }
-    ]
+    close_timeout: 5
   })
 };
 
 map.locations.forEach(function(location, index, array) {
   location.menu = menus[location.id];
+});
+
+// Game initialization, send out starting minute
+minuteListeners.forEach(function(listener, index, array) {
+  listener.everyMinute(0);
 });
