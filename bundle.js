@@ -1268,13 +1268,50 @@ game.on('draw-foreground', function(context){
 	game.currentScene.emit('draw-foreground', context);
 });
 
+game.on('lose', function(){
+  var loseMenu = new Menu({
+    game: game,
+    window: document.getElementById("dialog"),
+    message: "You lost. Play again?",
+    close_timeout: 5,
+    choices: [
+      { "name": "yes", "value": "Yes" },
+      { "name": "no", "value": "No" }
+    ]
+  });
+  loseMenu.opened = true;
+  loseMenu.open();
+});
+
 
 /*
 * Sounds
 */
 
-var daySound = new buzz.sound('./sounds/day.mp3');
-var nightSound = new buzz.sound('./sounds/night.mp3');
+game.currentSong = null;
+game.previousSong = null;
+game.musicPaused = false;
+var daySong = new buzz.sound('./sounds/day.mp3');
+var nightSong = new buzz.sound('./sounds/night.mp3');
+
+var pauseMusic = document.getElementById('pause-music');
+var playMusic = document.getElementById('play-music');
+
+pauseMusic.addEventListener('click', function(e){
+  console.log('clicked pause')
+  game.currentSong.pause();
+  playMusic.style.display = 'initial';
+  pauseMusic.style.display = 'none';
+  game.musicPaused = true;
+});
+
+playMusic.addEventListener('click', function(e){
+  console.log('clicked play')
+  game.currentSong.play().loop();
+  playMusic.style.display = 'none';
+  pauseMusic.style.display = 'initial';
+  game.musicPaused = false;
+});
 
 /*
 * Counter stuff
@@ -1384,6 +1421,14 @@ player.everyMinute = function(){
   }
 }
 
+player.on('update', function(){
+  console.log('health', player.health, 'wallet', wallet.cash)
+  if (wallet.cash == 0){
+    console.log('limit reached');
+    game.emit('lose');
+  }
+})
+
 
 /*
 *
@@ -1420,8 +1465,12 @@ var day = scene.create({
 
 day.on('start', function(){
 	console.log('day is starting');
-  daySound.play().loop();
-  nightSound.stop();
+  if (!game.musicPaused){
+    game.currentSong = daySong;
+    game.previousSong = nightSong;
+    game.currentSong.play().loop();
+    game.previousSong.stop();
+  }
 });
 
 day.on('update', function(interval){
@@ -1455,8 +1504,12 @@ var night = scene.create({
 
 night.on('start', function(){
 	console.log('night is starting')
-  nightSound.play().loop();
-  daySound.stop();
+  if (!game.musicPaused){
+    game.currentSong = nightSong;
+    game.previousSong = daySong;
+    game.currentSong.play().loop();
+    game.previousSong.stop();
+  }
 });
 
 night.on('update', function(interval){
@@ -2187,6 +2240,7 @@ Menu.prototype.open = function(okCallback, cancelCallback) {
   this.okCallback = okCallback;
 
   var elements = self.window.getElementsByClassName("message");
+  console.log(self.window, elements)
   if (elements.length == 1) {
     elements[0].innerHTML = this.message;
   }

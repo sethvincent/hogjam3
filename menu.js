@@ -38,6 +38,7 @@ Menu.prototype.open = function(okCallback, cancelCallback) {
   this.okCallback = okCallback;
 
   var elements = self.window.getElementsByClassName("message");
+  console.log(self.window, elements)
   if (elements.length == 1) {
     elements[0].innerHTML = this.message;
   }
