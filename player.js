@@ -4,6 +4,7 @@ var randomInt = require('./util/math').randomInt;
 var randomRGB = require('./util/math').randomRGB;
 var randomRGBA = require('./util/math').randomRGBA;
 var AssetLoader = require('./asset_loader');
+var Menu = require('./menu');
 
 module.exports = Player;
 
@@ -28,6 +29,7 @@ function Player(options){
   this.points = 00;
   this.blockers = {};
   this.step = 0;
+  this.can_move = true;
 
   this.particles = {
     jump: {
@@ -166,27 +168,49 @@ Player.prototype.boundaries = function(){
 };
 
 Player.prototype.input = function(){
-  if ('W' in this.keysDown){
-    this.velocity.y -= this.speed;
-    this.direction = "up";
-    this.step += 1;
-  }
+  if (this.can_move) {
+    if ('W' in this.keysDown){
+      this.velocity.y -= this.speed;
+      this.direction = "up";
+      this.step += 1;
+    }
 
-  if ('S' in this.keysDown){
-    this.velocity.y += this.speed;
-    this.direction = "down";
-    this.step += 1;
-  }
+    if ('S' in this.keysDown){
+      this.velocity.y += this.speed;
+      this.direction = "down";
+      this.step += 1;
+    }
 
-  if ('A' in this.keysDown){
-    this.velocity.x -= this.speed;
-    this.direction = "left";
-    this.step += 1;
-  }
+    if ('A' in this.keysDown){
+      this.velocity.x -= this.speed;
+      this.direction = "left";
+      this.step += 1;
+    }
 
-  if ('D' in this.keysDown){
-    this.velocity.x += this.speed;
-    this.direction = "right";
-    this.step += 1;
+    if ('D' in this.keysDown){
+      this.velocity.x += this.speed;
+      this.direction = "right";
+      this.step += 1;
+    }
   }
 };
+
+Player.prototype.workingMessageFunc = function(menu) {
+  var str = "<p>Money earned: " + menu.timer.toString() + "</p><p>Time remaining: " + (menu.close_timeout - menu.timer).toString() + "</p>";
+  return str;
+};
+
+Player.prototype.goToWork = function() {
+  var menu = new Menu({
+    game: this.game,
+    name: "working",
+    window: document.getElementById("dialog"),
+    message: "You are at work.",
+    close_timeout: 5,
+    modal: true,
+    timer_message: this.workingMessageFunc
+  });
+  menu.opened = true;
+  menu.open();
+  this.wallet.add(5);
+}

@@ -136,3 +136,9 @@ p {
   color: #c3c3c3;
   z-index: 1001;
 }
+
+#timer {
+  padding: 20px;
+  font-size: 30px;
+  color: white;
+}
